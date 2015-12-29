@@ -6,7 +6,7 @@
 (def wordy-date-parser (insta/parser
                         (str/join "\n" ["S = duration | dow | quickie"
                                         "quickie = 'tomorrow' | 'now'"
-                                        "duration = _duration (<whitespace> _duration)*"
+                                        "duration = _duration <(',' | 'and')?> (<whitespace> _duration)*"
                                         "_duration = (<pre-superfluous> <whitespace>)? digits <whitespace> period"
                                         "period = #'(min(ute)?|day|hour|week|month|year)s?'"
                                         "dow = (dow-modifier <whitespace>)? long-days"
