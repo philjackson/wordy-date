@@ -13,7 +13,9 @@
                                         "<pre-superfluous> = 'in' | '+' | 'plus'"
 
                                         "period = #'(sec(ond)?|min(ute)?|day|hour|week|month|year)s?'"
-                                        "dow = long-days"
+                                        "dow = long-days | short-days"
+
+                                        "short-days = 'mon' | 'tue' | 'wed' | 'thur' | 'fri' | 'sat' | 'sun'"
                                         "long-days = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'"
 
                                         "whitespace = #'\\s+'"
@@ -36,6 +38,16 @@
             our-dow (t/day-of-week next-week)]
         (t/plus next-week (t/days (- dow our-dow)))))))
 
+(defn day-number [day]
+  (case (subs day 0 3)
+    "mon" 1
+    "tue" 2
+    "wed" 3
+    "thu" 4
+    "fri" 5
+    "sat" 6
+    "sun" 7))
+
 (defn parse [st]
   (let [S (insta/transform {:digits clojure.edn/read-string
                             :period #(case (subs % 0 3)
@@ -46,14 +58,8 @@
                                        "wee" t/weeks
                                        "mon" t/months
                                        "yea" t/years)
-                            :long-days #(case %
-                                          "monday" 1
-                                          "tuesday" 2
-                                          "wednesday" 3
-                                          "thursday" 4
-                                          "friday" 5
-                                          "saturday" 6
-                                          "sunday" 7)
+                            :long-days day-number
+                            :short-days day-number
                             :duration handle-duration
                             :dow handle-dow
                             :quickie (fn [s]

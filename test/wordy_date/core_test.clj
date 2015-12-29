@@ -46,7 +46,9 @@
            (testing "for later this week"
              ;; later this week
              (match "wednesday" (t/date-time 2016 10 12 12 13 14))
-             (match "sunday" (t/date-time    2016 10 16 12 13 14)))
+             (match "wed" (t/date-time 2016 10 12 12 13 14))
+             (match "sunday" (t/date-time    2016 10 16 12 13 14))
+             (match "sun" (t/date-time    2016 10 16 12 13 14)))
 
            (testing "next week"
              ;; becomes next week (our test date is a tuesday)
