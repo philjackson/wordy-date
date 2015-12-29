@@ -20,8 +20,4 @@
            (match "10 mins" (-> now (t/plus (t/minutes 10))))
            (match "20 mins" (-> now (t/plus (t/minutes 20))))
            (match "20 hours" (-> now (t/plus (t/hours 20))))
-           (match "28 hours" (-> now (t/plus (t/hours 28))))
-
-           (match "10.5 hours" (-> now
-                                   (t/plus (t/hours 28.5))
-                                   (t/plus (t/minutes 30)))))))))
+           (match "28 hours" (-> now (t/plus (t/hours 28)))))))))

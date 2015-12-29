@@ -13,7 +13,7 @@
                                         "dow-modifier = 'next' | 'this'"
                                         "<pre-superfluous> = 'in' | '+' | 'plus'"
                                         "whitespace = #'\\s+'"
-                                        "digits = #'-?[0-9.]+'"])
+                                        "digits = #'-?[0-9]+'"])
                         :string-ci true))
 
 (defn parse [st]
