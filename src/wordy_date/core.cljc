@@ -39,7 +39,7 @@
             our-dow (t/day-of-week next-week)]
         (t/plus next-week (t/days (- dow our-dow)))))))
 
-(defn day-number [day]
+(defn day-number* [day]
   (case (subs day 0 3)
     "mon" 1
     "tue" 2
@@ -48,6 +48,8 @@
     "fri" 5
     "sat" 6
     "sun" 7))
+
+(def day-number (memoize day-number*))
 
 (defn parse [st]
   (let [S (insta/transform {:digits #?(:clj clojure.edn/read-string
