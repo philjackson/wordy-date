@@ -1,6 +1,7 @@
 (ns wordy-date.core
   (:require [clojure.string :as str]
-            [clj-time.core :as t]
+            #?(:clj [clj-time.core :as t]
+               :cljs [cljs-time.core :as t])
             [instaparse.core :as insta]))
 
 (def wordy-date-parser (insta/parser
@@ -49,7 +50,8 @@
     "sun" 7))
 
 (defn parse [st]
-  (let [S (insta/transform {:digits clojure.edn/read-string
+  (let [S (insta/transform {:digits #?(:clj clojure.edn/read-string
+                                       :cljs js/parseInt)
                             :period #(case (subs % 0 3)
                                        "sec" t/seconds
                                        "min" t/minutes
