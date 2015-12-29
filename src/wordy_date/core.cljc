@@ -2,7 +2,8 @@
   (:require [clojure.string :as str]
             #?(:clj [clj-time.core :as t]
                :cljs [cljs-time.core :as t])
-            [instaparse.core :as insta]))
+            [instaparse.core :as insta]
+            #?(:clj [clojure.edn])))
 
 (def wordy-date-parser (insta/parser
                         (str/join "\n" ["S = duration | dow | quickie"
