@@ -6,13 +6,18 @@
 (def wordy-date-parser (insta/parser
                         (str/join "\n" ["S = duration | dow | quickie"
                                         "quickie = 'tomorrow' | 'now'"
+
+                                        ;; durations
                                         "duration = _duration <(',' | <whitespace> 'and')?> (<whitespace> _duration)*"
                                         "_duration = (<pre-superfluous> <whitespace>)? digits <whitespace> period"
-                                        "period = #'(min(ute)?|day|hour|week|month|year)s?'"
+                                        "<pre-superfluous> = 'in' | '+' | 'plus'"
+
+
+                                        "period = #'(sec(ond)?|min(ute)?|day|hour|week|month|year)s?'"
                                         "dow = (dow-modifier <whitespace>)? long-days"
                                         "long-days = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'"
+
                                         "dow-modifier = 'next' | 'this'"
-                                        "<pre-superfluous> = 'in' | '+' | 'plus'"
                                         "whitespace = #'\\s+'"
                                         "digits = #'-?[0-9]+'"])
                         :string-ci true))
@@ -24,6 +29,7 @@
 (defn parse [st]
   (let [S (insta/transform {:digits clojure.edn/read-string
                             :period #(case (subs % 0 3)
+                                       "sec" t/seconds
                                        "min" t/minutes
                                        "day" t/days
                                        "hou" t/hours
