@@ -1,8 +1,8 @@
 (ns wordy-date.core
   (:require [clojure.string :as str]
-            #?(:clj [clj-time.core :as t]
-               :cljs [cljs-time.core :as t])
             [instaparse.core :as insta]
+            #?(:clj  [clj-time.core :as t]
+               :cljs [cljs-time.core :as t])
             #?(:clj [clojure.edn])))
 
 (def wordy-date-parser (insta/parser
