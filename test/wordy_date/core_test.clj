@@ -43,6 +43,12 @@
                                           (t/plus (t/minutes 30)))))
 
          (testing "dow"
-           (match "monday" (t/date-time 2016 10 10 12 13 14))
-           (match "wednesday" (t/date-time 2016 10 12 12 13 14))
-           (match "this monday" (t/date-time 2016 10 10 12 13 14)))))))
+           (testing "for later this week"
+             ;; later this week
+             (match "wednesday" (t/date-time 2016 10 12 12 13 14))
+             (match "sunday" (t/date-time    2016 10 16 12 13 14)))
+
+           (testing "next week"
+             ;; becomes next week (our test date is a tuesday)
+             (match "monday" (t/date-time  2016 10 17 12 13 14))
+             (match "tuesday" (t/date-time 2016 10 18 12 13 14))))))))

@@ -13,10 +13,9 @@
                                         "<pre-superfluous> = 'in' | '+' | 'plus'"
 
                                         "period = #'(sec(ond)?|min(ute)?|day|hour|week|month|year)s?'"
-                                        "dow = (dow-modifier | <'this'> <whitespace>)? long-days"
+                                        "dow = long-days"
                                         "long-days = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'"
 
-                                        "dow-modifier = 'next'"
                                         "whitespace = #'\\s+'"
                                         "digits = #'-?[0-9]+'"])
                         :string-ci true))
@@ -25,10 +24,17 @@
   (reduce (fn [now [_ amount f]]
             (t/plus now (f amount))) (t/now) args))
 
-(defn handle-dow
-  ([dow] (let [now (t/now)
-               our-dow (t/day-of-week now)]
-           (t/plus now (t/days (- dow our-dow))))))
+(defn handle-dow [dow]
+  (let [now (t/now)
+        our-dow (t/day-of-week now)]
+    (if (< our-dow dow)
+      ;; this occurs this week as the day given is "after" now
+      (t/plus now (t/days (- dow our-dow)))
+
+      ;; we move to next week as the day asked for is "before" now
+      (let [next-week (t/plus (t/now) (t/weeks 1))
+            our-dow (t/day-of-week next-week)]
+        (t/plus next-week (t/days (- dow our-dow)))))))
 
 (defn parse [st]
   (let [S (insta/transform {:digits clojure.edn/read-string
@@ -40,7 +46,6 @@
                                        "wee" t/weeks
                                        "mon" t/months
                                        "yea" t/years)
-                            :dow-modifier str
                             :long-days #(case %
                                           "monday" 1
                                           "tuesday" 2
