@@ -8,6 +8,7 @@
 ;;  1
 ;;  2  3  4  5  6  7  8
 ;;  9 10 11 12 13 14 15
+;;       ^^
 ;; 16 17 18 19 20 21 22
 ;; 23 24 25 26 27 28 29
 ;; 30 31
@@ -42,4 +43,6 @@
                                           (t/plus (t/minutes 30)))))
 
          (testing "dow"
-           (match "this monday" (t/date-time 2015 10 10 12 13 14)))))))
+           (match "monday" (t/date-time 2016 10 10 12 13 14))
+           (match "wednesday" (t/date-time 2016 10 12 12 13 14))
+           (match "this monday" (t/date-time 2016 10 10 12 13 14)))))))
