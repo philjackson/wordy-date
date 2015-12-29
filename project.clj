@@ -1,6 +1,6 @@
 (defproject wordy-date "0.1.0-SNAPSHOT"
   :description "A library that converts a date described as a human into an actual date."
-  :url "http://example.com/FIXME"
+  :url "https://github.com/philjackson/wordy-date"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.7.0"]
