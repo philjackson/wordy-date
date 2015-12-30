@@ -31,10 +31,10 @@
 
          (t/testing "periods"
            (match "10 seconds" (time/plus fake-now (time/seconds 10)))
-           (match "10 mins" (time/plus fake-now (time/minutes 10)))
-           (match "20 mins" (time/plus fake-now (time/minutes 20)))
-           (match "20 hours" (time/plus fake-now (time/hours 20)))
-           (match "28 hours" (time/plus fake-now (time/hours 28)))
+           (match "10 mins"    (time/plus fake-now (time/minutes 10)))
+           (match "20 mins"    (time/plus fake-now (time/minutes 20)))
+           (match "20 hours"   (time/plus fake-now (time/hours 20)))
+           (match "28 hours"   (time/plus fake-now (time/hours 28)))
 
            (match "10 hours and 30 mins" (-> fake-now
                                              (time/plus (time/hours 10))
