@@ -51,11 +51,11 @@
            (t/testing "for later this week"
              ;; later this week
              (match "wednesday" (time/date-time 2016 10 12 12 13 14))
-             (match "wed" (time/date-time 2016 10 12 12 13 14))
-             (match "sunday" (time/date-time    2016 10 16 12 13 14))
-             (match "sun" (time/date-time    2016 10 16 12 13 14)))
+             (match "wed"       (time/date-time 2016 10 12 12 13 14))
+             (match "sunday"    (time/date-time 2016 10 16 12 13 14))
+             (match "sun"       (time/date-time 2016 10 16 12 13 14)))
 
            (t/testing "next week"
              ;; becomes next week (our test date is a tuesday)
-             (match "monday" (time/date-time  2016 10 17 12 13 14))
+             (match "monday"  (time/date-time  2016 10 17 12 13 14))
              (match "tuesday" (time/date-time 2016 10 18 12 13 14))))))))
