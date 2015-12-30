@@ -1,9 +1,9 @@
 (ns wordy-date.core-test
-  (:require #?(:clj  [clj-time.core :as time]
-               :cljs [cljs-time.core :as time])
-            #?(:cljs [cljs.test :as t]
-               :clj  [clojure.test :as t])
-            [wordy-date.core :refer :all]))
+  (:require #?@(:clj [[clj-time.core :as time]
+                      [clojure.test :as t]]
+                :cljs [[cljs-time.core :as time]
+                       [cljs.test :as t]])
+            [wordy-date.core :as wd]))
 
 ;; October 2016
 ;; Su Mo Tu We Th Fr Sa
@@ -19,7 +19,7 @@
 
 (t/deftest human-date-test
   (let [tomorrow (time/plus fake-now (time/days 1))
-        match (fn [st date] (t/is (= (parse st) date)))]
+        match (fn [st date] (t/is (= (wd/parse st) date)))]
     (with-redefs-fn {#'time/now (constantly fake-now)}
       #(do
          (t/testing "redef worked"
