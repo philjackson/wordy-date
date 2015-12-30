@@ -27,7 +27,6 @@
                         :string-ci true))
 
 (defn handle-neg-duration [& args]
-  (prn args)
   (reduce (fn [now [_ amount f]]
             (t/minus now (f amount))) (t/now) args))
 
