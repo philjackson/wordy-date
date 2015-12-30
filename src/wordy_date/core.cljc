@@ -6,12 +6,13 @@
             #?(:clj [clojure.edn])))
 
 (def wordy-date-parser (insta/parser
-                        (str/join "\n" ["S = pos-duration | dow | quickie"
+                        (str/join "\n" ["S = neg-duration | pos-duration | dow | quickie"
                                         "quickie = 'tomorrow' | 'now'"
 
                                         ;; durations
-                                        "pos-duration = _duration <(',' | <whitespace> 'and')?> (<whitespace> _duration)*"
-                                        "_duration = (<pre-superfluous> <whitespace>)? digits <whitespace> period"
+                                        "neg-duration = _duration <(',' | <ws> 'and')?> (<ws> _duration)* <ws> <'ago'>"
+                                        "pos-duration = _duration <(',' | <ws> 'and')?> (<ws> _duration)*"
+                                        "_duration = (<pre-superfluous> <ws>)? digits <ws> period"
                                         "<pre-superfluous> = 'in' | '+' | 'plus'"
 
                                         "period = #'(sec(ond)?|min(ute)?|day|hour|week|month|year)s?'"
@@ -20,9 +21,14 @@
                                         "short-days = 'mon' | 'tue' | 'wed' | 'thur' | 'fri' | 'sat' | 'sun'"
                                         "long-days = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'"
 
-                                        "whitespace = #'\\s+'"
+                                        "ws = #'\\s+'"
                                         "digits = #'-?[0-9]+'"])
                         :string-ci true))
+
+(defn handle-neg-duration [& args]
+  (prn args)
+  (reduce (fn [now [_ amount f]]
+            (t/minus now (f amount))) (t/now) args))
 
 (defn handle-pos-duration [& args]
   (reduce (fn [now [_ amount f]]
@@ -65,6 +71,7 @@
                                        "yea" t/years)
                             :long-days day-number
                             :short-days day-number
+                            :neg-duration handle-neg-duration
                             :pos-duration handle-pos-duration
                             :dow handle-dow
                             :quickie (fn [s]

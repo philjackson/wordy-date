@@ -44,6 +44,9 @@
                                           (time/plus (time/hours 10))
                                           (time/plus (time/minutes 30)))))
 
+         (t/testing "negative periods"
+           (match "10 minutes ago" (time/minus fake-now (time/minutes 10))))
+
          (t/testing "dow"
            (t/testing "for later this week"
              ;; later this week
