@@ -10,8 +10,9 @@
                                         "quickie = 'tomorrow' | 'now'"
 
                                         ;; durations
-                                        "neg-duration = _duration <(',' | <ws> 'and')?> (<ws> _duration)* <ws> <'ago'>"
-                                        "pos-duration = _duration <(',' | <ws> 'and')?> (<ws> _duration)*"
+                                        "neg-duration = _multi-duration <ws> <'ago'>"
+                                        "pos-duration = _multi-duration"
+                                        "<_multi-duration> = _duration <(',' | <ws> 'and')?> (<ws> _duration)*"
                                         "_duration = (<pre-superfluous> <ws>)? digits <ws> period"
                                         "<pre-superfluous> = 'in' | '+' | 'plus'"
 
