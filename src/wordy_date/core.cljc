@@ -6,11 +6,11 @@
             #?(:clj [clojure.edn])))
 
 (def wordy-date-parser (insta/parser
-                        (str/join "\n" ["S = duration | dow | quickie"
+                        (str/join "\n" ["S = pos-duration | dow | quickie"
                                         "quickie = 'tomorrow' | 'now'"
 
                                         ;; durations
-                                        "duration = _duration <(',' | <whitespace> 'and')?> (<whitespace> _duration)*"
+                                        "pos-duration = _duration <(',' | <whitespace> 'and')?> (<whitespace> _duration)*"
                                         "_duration = (<pre-superfluous> <whitespace>)? digits <whitespace> period"
                                         "<pre-superfluous> = 'in' | '+' | 'plus'"
 
@@ -24,7 +24,7 @@
                                         "digits = #'-?[0-9]+'"])
                         :string-ci true))
 
-(defn handle-duration [& args]
+(defn handle-pos-duration [& args]
   (reduce (fn [now [_ amount f]]
             (t/plus now (f amount))) (t/now) args))
 
@@ -65,7 +65,7 @@
                                        "yea" t/years)
                             :long-days day-number
                             :short-days day-number
-                            :duration handle-duration
+                            :pos-duration handle-pos-duration
                             :dow handle-dow
                             :quickie (fn [s]
                                        (case s
