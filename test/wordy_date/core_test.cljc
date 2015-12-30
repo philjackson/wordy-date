@@ -34,14 +34,15 @@
         (match "20 mins"    (time/plus fake-now (time/minutes 20)))
         (match "20 hours"   (time/plus fake-now (time/hours 20)))
         (match "28 hours"   (time/plus fake-now (time/hours 28)))
+        (match "-28 hours"  (time/minus fake-now (time/hours 28)))
+
+        (match "20 mins and -10 mins" (time/plus fake-now (time/minutes 10)))
 
         (match "10 hours and 30 mins" (-> fake-now
                                           (time/plus (time/hours 10))
                                           (time/plus (time/minutes 30))))
 
-        (match "10 hours, 30 mins" (-> fake-now
-                                       (time/plus (time/hours 10))
-                                       (time/plus (time/minutes 30)))))
+        (match "10 hours, 30 mins" (wd/parse "10 hours and 30 mins")))
 
       (t/testing "negative periods"
         (match "10 minutes ago" (time/minus fake-now (time/minutes 10))))
