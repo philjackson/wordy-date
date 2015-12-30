@@ -1,6 +1,7 @@
 (ns wordy-date.core
   (:require [clojure.string :as str]
             [instaparse.core :as insta]
+            [wordy-date.numbers :refer [insta-nums number-map]]
             #?(:clj  [clj-time.core :as t]
                :cljs [cljs-time.core :as t])
             #?(:clj [clojure.edn])))
@@ -13,14 +14,15 @@
                                         "neg-duration = _multi-duration <ws> <'ago'>"
                                         "pos-duration = _multi-duration"
                                         "<_multi-duration> = _duration <(',' | <ws> 'and')?> (<ws> _duration)*"
-                                        "_duration = (<pre-superfluous> <ws>)? digits <ws> period"
+                                        "_duration = (<pre-superfluous> <ws>)? ( digits | wordy-numbers ) <ws> period"
                                         "<pre-superfluous> = 'in' | '+' | 'plus'"
+
+                                        ;; list of numbers as words 'one' | 'two'...
+                                        (str "wordy-numbers = " insta-nums)
 
                                         "period = #'(sec(ond)?|min(ute)?|day|hour|week|month|year)s?'"
                                         "dow = long-days | short-days"
-
-                                        "wordy-numbers = one two three four five six seven eight nine ten eleven twelve thirteen fourteen fiveteen siz"
-
+                                        
                                         "short-days = 'mon' | 'tue' | 'wed' | 'thur' | 'fri' | 'sat' | 'sun'"
                                         "long-days = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'"
 
@@ -80,6 +82,7 @@
                             :period period-translation
                             :long-days day-number
                             :short-days day-number
+                            :wordy-numbers #(get number-map %)
                             :neg-duration handle-neg-duration
                             :pos-duration handle-pos-duration
                             :dow handle-dow

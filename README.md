@@ -17,6 +17,7 @@ In your source:
     (parse "three minutes")
     (parse "two weeks, three minutes")
     (parse "two weeks, 3 hours ago")
+    (parse "2 days")
     (parse "-2 hours")
     (parse "monday")
     (parse "now")
