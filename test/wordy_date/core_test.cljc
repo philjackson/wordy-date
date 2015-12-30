@@ -20,42 +20,41 @@
 (t/deftest human-date-test
   (let [tomorrow (time/plus fake-now (time/days 1))
         match (fn [st date] (t/is (= (wd/parse st) date)))]
-    (with-redefs-fn {#'time/now (constantly fake-now)}
-      #(do
-         (t/testing "redef worked"
-           (t/is (= "2016-10-11T12:13:14.000Z" (str (time/now)))))
+    (with-redefs [time/now (constantly fake-now)]
+      (t/testing "redef worked"
+        (t/is (= "2016-10-11T12:13:14.000Z" (str (time/now)))))
 
-         (t/testing "quickies"
-           (match "now" fake-now)
-           (match "tomorrow" tomorrow))
+      (t/testing "quickies"
+        (match "now" fake-now)
+        (match "tomorrow" tomorrow))
 
-         (t/testing "periods"
-           (match "10 seconds" (time/plus fake-now (time/seconds 10)))
-           (match "10 mins"    (time/plus fake-now (time/minutes 10)))
-           (match "20 mins"    (time/plus fake-now (time/minutes 20)))
-           (match "20 hours"   (time/plus fake-now (time/hours 20)))
-           (match "28 hours"   (time/plus fake-now (time/hours 28)))
+      (t/testing "periods"
+        (match "10 seconds" (time/plus fake-now (time/seconds 10)))
+        (match "10 mins"    (time/plus fake-now (time/minutes 10)))
+        (match "20 mins"    (time/plus fake-now (time/minutes 20)))
+        (match "20 hours"   (time/plus fake-now (time/hours 20)))
+        (match "28 hours"   (time/plus fake-now (time/hours 28)))
 
-           (match "10 hours and 30 mins" (-> fake-now
-                                             (time/plus (time/hours 10))
-                                             (time/plus (time/minutes 30))))
-
-           (match "10 hours, 30 mins" (-> fake-now
+        (match "10 hours and 30 mins" (-> fake-now
                                           (time/plus (time/hours 10))
-                                          (time/plus (time/minutes 30)))))
+                                          (time/plus (time/minutes 30))))
 
-         (t/testing "negative periods"
-           (match "10 minutes ago" (time/minus fake-now (time/minutes 10))))
+        (match "10 hours, 30 mins" (-> fake-now
+                                       (time/plus (time/hours 10))
+                                       (time/plus (time/minutes 30)))))
 
-         (t/testing "dow"
-           (t/testing "for later this week"
-             ;; later this week
-             (match "wednesday" (time/date-time 2016 10 12 12 13 14))
-             (match "wed"       (time/date-time 2016 10 12 12 13 14))
-             (match "sunday"    (time/date-time 2016 10 16 12 13 14))
-             (match "sun"       (time/date-time 2016 10 16 12 13 14)))
+      (t/testing "negative periods"
+        (match "10 minutes ago" (time/minus fake-now (time/minutes 10))))
 
-           (t/testing "next week"
-             ;; becomes next week (our test date is a tuesday)
-             (match "monday"  (time/date-time  2016 10 17 12 13 14))
-             (match "tuesday" (time/date-time 2016 10 18 12 13 14))))))))
+      (t/testing "dow"
+        (t/testing "for later this week"
+          ;; later this week
+          (match "wednesday" (time/date-time 2016 10 12 12 13 14))
+          (match "wed"       (time/date-time 2016 10 12 12 13 14))
+          (match "sunday"    (time/date-time 2016 10 16 12 13 14))
+          (match "sun"       (time/date-time 2016 10 16 12 13 14)))
+
+        (t/testing "next week"
+          ;; becomes next week (our test date is a tuesday)
+          (match "monday"  (time/date-time  2016 10 17 12 13 14))
+          (match "tuesday" (time/date-time 2016 10 18 12 13 14)))))))
