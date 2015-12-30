@@ -60,17 +60,22 @@
 
 (def day-number (memoize day-number*))
 
+(defn period-translation* [st]
+  (case (subs st 0 3)
+    "sec" t/seconds
+    "min" t/minutes
+    "day" t/days
+    "hou" t/hours
+    "wee" t/weeks
+    "mon" t/months
+    "yea" t/years))
+
+(def period-translation (memoize period-translation*))
+
 (defn parse [st]
   (let [S (insta/transform {:digits #?(:clj clojure.edn/read-string
                                        :cljs js/parseInt)
-                            :period #(case (subs % 0 3)
-                                       "sec" t/seconds
-                                       "min" t/minutes
-                                       "day" t/days
-                                       "hou" t/hours
-                                       "wee" t/weeks
-                                       "mon" t/months
-                                       "yea" t/years)
+                            :period period-translation
                             :long-days day-number
                             :short-days day-number
                             :neg-duration handle-neg-duration
