@@ -19,6 +19,8 @@
                                         "period = #'(sec(ond)?|min(ute)?|day|hour|week|month|year)s?'"
                                         "dow = long-days | short-days"
 
+                                        "wordy-numbers = one two three four five six seven eight nine ten eleven twelve thirteen fourteen fiveteen siz"
+
                                         "short-days = 'mon' | 'tue' | 'wed' | 'thur' | 'fri' | 'sat' | 'sun'"
                                         "long-days = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'"
 
