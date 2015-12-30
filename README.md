@@ -12,11 +12,12 @@ date relative to now. Clojurescript or Clojure compatible.
 
 In your source:
 
-    (:require [wordy-date :refer [parse]])
+    (require 'wordy-date.core)
 
     (parse "three minutes")
     (parse "two weeks, three minutes")
-    (parse "two weeks, three hours ago")
+    (parse "two weeks, 3 hours ago")
+    (parse "-2 hours")
     (parse "monday")
     (parse "now")
     (parse "tomorrow")
