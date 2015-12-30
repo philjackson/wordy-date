@@ -26,13 +26,15 @@
                                         "digits = #'-?[0-9]+'"])
                         :string-ci true))
 
-(defn handle-neg-duration [& args]
+(defn handle-duration [modifier & args]
   (reduce (fn [now [_ amount f]]
-            (t/minus now (f amount))) (t/now) args))
+            (modifier now (f amount))) (t/now) args))
+
+(defn handle-neg-duration [& args]
+  (apply handle-duration t/minus args))
 
 (defn handle-pos-duration [& args]
-  (reduce (fn [now [_ amount f]]
-            (t/plus now (f amount))) (t/now) args))
+  (apply handle-duration t/plus args))
 
 (defn handle-dow [dow]
   (let [now (t/now)
