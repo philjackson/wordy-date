@@ -9,7 +9,7 @@
 (def valid-days (str/join " | " (map #(str "'" % "'") (range 1 32))))
 
 (def wordy-date-parser (insta/parser
-                        (str/join "\n" ["S = neg-duration | pos-duration | dow-ts | dow | quickie | lone-time-stamp"
+                        (str/join "\n" ["S = neg-duration | pos-duration | dow-ts | dow | quickie | lone-time-stamp | ordinal-day"
                                         "quickie = 'tomorrow' | 'now'"
 
                                         ;; durations
@@ -32,10 +32,12 @@
                                         "short-days = 'mon' | 'tue' | 'wed' | 'thur' | 'fri' | 'sat' | 'sun'"
                                         "long-days = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'"
 
+                                        ;; 1st, 2nd, 31st etc.
+                                        "ordinal-day = day-digits <( 'th' | 'nd' | 'rd' | 'st')>"
+
                                         (str "day-digits = " valid-days)
                                         "ws = #'\\s+'"
-                                        "signed-digits = #'[-+]?[0-9]+'"
-                                        "unsigned-digits = #'[0-9]+'"])
+                                        "signed-digits = #'[-+]?[0-9]+'"])
                         :string-ci true))
 
 (defn handle-duration [modifier & args]
@@ -59,6 +61,14 @@
       (let [next-week (t/plus (t/now) (t/weeks 1))
             our-dow (t/day-of-week next-week)]
         (t/plus next-week (t/days (- dow our-dow)))))))
+
+(defn handle-ordinal-day [day]
+  (let [now (t/now)]
+    (if (< day (t/day now))
+      ;; clj-time is smart and won't take us two months ahead
+      (let [next-month (t/plus now (t/months 1))]
+        (t/date-time (t/year next-month) (t/month next-month) day))
+      (t/date-time (t/year now) (t/month now) day))))
 
 (defn midnight [ts]
   (t/date-time (t/year ts) (t/month ts) (t/day ts) 0 0 0))
@@ -113,7 +123,9 @@
                             :long-days day-number
                             :short-days day-number
                             :lone-time-stamp #(timestamp-to-day (t/now) %)
+                            :day-digits parse-int
                             :ts parse-time
+                            :ordinal-day handle-ordinal-day
                             :wordy-numbers #(get number-map %)
                             :neg-duration handle-neg-duration
                             :pos-duration handle-pos-duration
