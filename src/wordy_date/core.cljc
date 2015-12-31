@@ -7,7 +7,7 @@
             #?(:clj [clojure.edn])))
 
 (def wordy-date-parser (insta/parser
-                        (str/join "\n" ["S = neg-duration | pos-duration | dow | quickie"
+                        (str/join "\n" ["S = neg-duration | pos-duration | dow | quickie | lone-time-stamp"
                                         "quickie = 'tomorrow' | 'now'"
 
                                         ;; durations
@@ -22,7 +22,9 @@
 
                                         "period = #'(sec(ond)?|min(ute)?|day|hour|week|month|year)s?'"
                                         "dow = long-days | short-days"
-                                        
+                                        "lone-time-stamp = ts"
+                                        "ts = #'(\\d{2})(?::(\\d{2}))?(am|pm)?'"
+
                                         "short-days = 'mon' | 'tue' | 'wed' | 'thur' | 'fri' | 'sat' | 'sun'"
                                         "long-days = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'"
 
@@ -76,12 +78,35 @@
 
 (def period-translation (memoize period-translation*))
 
+(def parse-int #?(:clj clojure.edn/read-string
+                  :cljs js/parseInt))
+
+(defn parse-time [st]
+  (let [[_ hours mins modifier] (re-find #"(\d{2})(?::(\d{2}))?(am|pm)?" st)
+        hours (parse-int hours)]
+    (cond-> {:hour hours :min 0}
+      ;; parse the mins if they're there
+      mins (assoc :min (parse-int mins))
+
+      ;; 11pm becomes 23
+      (and (= modifier "pm") (< hours 12)) (update :hour #(+ % 12)))))
+
+(defn midnight []
+  (let [now (t/now)]
+    (t/date-time (t/year now) (t/month now) (t/day now) 0 0 0)))
+
+(defn timestamp-to-today [{:keys [hour min]}]
+  (-> (midnight)
+      (t/plus (t/hours hour))
+      (t/plus (t/minutes min)))) 
+
 (defn parse [st]
-  (let [S (insta/transform {:digits #?(:clj clojure.edn/read-string
-                                       :cljs js/parseInt)
+  (let [S (insta/transform {:digits parse-int
                             :period period-translation
                             :long-days day-number
                             :short-days day-number
+                            :lone-time-stamp timestamp-to-today
+                            :ts parse-time
                             :wordy-numbers #(get number-map %)
                             :neg-duration handle-neg-duration
                             :pos-duration handle-pos-duration
