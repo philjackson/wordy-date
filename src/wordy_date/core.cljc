@@ -7,7 +7,7 @@
             #?(:clj [clojure.edn])))
 
 (def wordy-date-parser (insta/parser
-                        (str/join "\n" ["S = neg-duration | pos-duration | dow | quickie | lone-time-stamp"
+                        (str/join "\n" ["S = neg-duration | pos-duration | dow-ts | dow | quickie | lone-time-stamp"
                                         "quickie = 'tomorrow' | 'now'"
 
                                         ;; durations
@@ -24,6 +24,8 @@
                                         "dow = long-days | short-days"
                                         "lone-time-stamp = ts"
                                         "ts = #'(\\d{2})(?::(\\d{2}))?(am|pm)?'"
+
+                                        "dow-ts = dow <ws> ts"
 
                                         "short-days = 'mon' | 'tue' | 'wed' | 'thur' | 'fri' | 'sat' | 'sun'"
                                         "long-days = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'"
@@ -53,6 +55,16 @@
       (let [next-week (t/plus (t/now) (t/weeks 1))
             our-dow (t/day-of-week next-week)]
         (t/plus next-week (t/days (- dow our-dow)))))))
+
+(defn midnight [ts]
+  (t/date-time (t/year ts) (t/month ts) (t/day ts) 0 0 0))
+
+(defn timestamp-to-day [ts {:keys [hour min]}]
+  (-> (midnight ts)
+      (t/plus (t/hours hour) (t/minutes min))))
+
+(defn handle-dow-ts [dow ts]
+  (timestamp-to-day dow ts))
 
 (defn day-number* [day]
   (case (subs day 0 3)
@@ -91,25 +103,18 @@
       ;; 11pm becomes 23
       (and (= modifier "pm") (< hours 12)) (update :hour #(+ % 12)))))
 
-(defn midnight []
-  (let [now (t/now)]
-    (t/date-time (t/year now) (t/month now) (t/day now) 0 0 0)))
-
-(defn timestamp-to-today [{:keys [hour min]}]
-  (-> (midnight)
-      (t/plus (t/hours hour) (t/minutes min)))) 
-
 (defn parse [st]
   (let [S (insta/transform {:digits parse-int
                             :period period-translation
                             :long-days day-number
                             :short-days day-number
-                            :lone-time-stamp timestamp-to-today
+                            :lone-time-stamp #(timestamp-to-day (t/now) %)
                             :ts parse-time
                             :wordy-numbers #(get number-map %)
                             :neg-duration handle-neg-duration
                             :pos-duration handle-pos-duration
                             :dow handle-dow
+                            :dow-ts handle-dow-ts
                             :quickie (fn [s]
                                        (case s
                                          "tomorrow" (t/plus (t/now) (t/days 1))
