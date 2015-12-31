@@ -12,22 +12,45 @@ section:
 
 In your source:
 
+Making the assumption today's time is `2016-10-11T12:13:14.000Z`:
+
     (require 'wordy-date.core)
 
-    (parse "22nd")
-    (parse "22nd 1pm")
-    (parse "22nd 22:45")
-    (parse "monday 12:30")
-    (parse "three minutes")
-    (parse "two weeks, three minutes")
-    (parse "two weeks, 3 hours ago")
-    (parse "2 days")
-    (parse "-2 hours")
-    (parse "monday")
+Some examples yanked straight from the tests:
+
     (parse "now")
     (parse "tomorrow")
+    (parse "10 seconds")
+    (parse "ten seconds")
+    (parse "10 mins")
+    (parse "20 mins")
+    (parse "twenty mins")
+    (parse "20 hours")
+    (parse "28 hours")
+    (parse "-28 hours")
+    (parse "20 mins and -10 mins")
+    (parse "12:30")
+    (parse "12am")
+    (parse "10 minutes ago")
+    (parse "wednesday")
+    (parse "wed")
+    (parse "sunday")
+    (parse "sun")
+    (parse "wed 12:30")
+    (parse "sun 12am")
+    (parse "monday")
+    (parse "tuesday")
+    (parse "mon 11pm")
+    (parse "tuesday 1")
+    (parse "tuesday 1pm")
+    (parse "1st")
+    (parse "22nd")
+    (parse "1pm 22nd")
+    (parse "22nd 1am")
+    (parse "22nd @ 1am")
+    (parse "22nd at 1am")
 
-See the tests for more possibilities.
+I'd suggest having a look at the tests for all examples.
 
 ## TODO
 
