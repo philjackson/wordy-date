@@ -29,6 +29,12 @@ In your source:
 
 See the tests for more possibilities.
 
+## TODO
+
+* Allow user to specify date relative to expressions.
+* Account for local time(?)
+* Instaparse string a bit crufty?
+
 ## License
 
 Copyright © 2015 Phil Jackson
