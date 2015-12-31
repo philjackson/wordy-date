@@ -14,6 +14,9 @@ In your source:
 
     (require 'wordy-date.core)
 
+    (parse "22nd")
+    (parse "22nd 1pm")
+    (parse "22nd 22:45")
     (parse "monday 12:30")
     (parse "three minutes")
     (parse "two weeks, three minutes")
