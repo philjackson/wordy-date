@@ -6,7 +6,13 @@
                :cljs [cljs-time.core :as t])
             #?(:clj [clojure.edn])))
 
-(def valid-days (str/join " | " (map #(str "'" % "'") (range 1 32))))
+(defn make-insta-strings [things]
+  (str/join " | " (map #(str "'" % "'") things)))
+
+(def valid-days (make-insta-strings (range 1 32)))
+(def valid-hours (make-insta-strings (range 0 25)))
+(def valid-mins (make-insta-strings (range 0 61)))
+(def valid-secs valid-mins)
 
 (def wordy-date-parser
   (insta/parser
