@@ -5,10 +5,10 @@ date relative to now. Clojurescript or Clojure compatible.
 
 ## Usage
 
-    In your project.clj; add the following line to the `:dependencies`
-    section:
+In your project.clj; add the following line to the `:dependencies`
+section:
 
-    [philjackson/wordy-date "0.1.0-SNAPSHOT"]
+    [philjackson/wordy-date "0.1.2"]
 
 In your source:
 
