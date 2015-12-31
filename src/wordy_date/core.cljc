@@ -14,7 +14,7 @@
                                         "neg-duration = _multi-duration <ws> <'ago'>"
                                         "pos-duration = _multi-duration"
                                         "<_multi-duration> = _duration <(',' | <ws> 'and')?> (<ws> _duration)*"
-                                        "_duration = (<pre-superfluous> <ws>)? ( digits | wordy-numbers ) <ws> period"
+                                        "_duration = (<pre-superfluous> <ws>)? ( signed-digits | wordy-numbers ) <ws> period"
                                         "<pre-superfluous> = 'in' | '+' | 'plus'"
 
                                         ;; list of numbers as words 'one' | 'two'...
@@ -31,7 +31,7 @@
                                         "long-days = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'"
 
                                         "ws = #'\\s+'"
-                                        "digits = #'-?[0-9]+'"])
+                                        "signed-digits = #'-?[0-9]+'"])
                         :string-ci true))
 
 (defn handle-duration [modifier & args]
@@ -104,7 +104,7 @@
       (and (= modifier "pm") (< hours 12)) (update :hour #(+ % 12)))))
 
 (defn parse [st]
-  (let [S (insta/transform {:digits parse-int
+  (let [S (insta/transform {:signed-digits parse-int
                             :period period-translation
                             :long-days day-number
                             :short-days day-number
