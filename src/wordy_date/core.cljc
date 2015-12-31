@@ -6,6 +6,8 @@
                :cljs [cljs-time.core :as t])
             #?(:clj [clojure.edn])))
 
+(def valid-days (str/join " | " (map #(str "'" % "'") (range 1 32))))
+
 (def wordy-date-parser (insta/parser
                         (str/join "\n" ["S = neg-duration | pos-duration | dow-ts | dow | quickie | lone-time-stamp"
                                         "quickie = 'tomorrow' | 'now'"
@@ -30,6 +32,7 @@
                                         "short-days = 'mon' | 'tue' | 'wed' | 'thur' | 'fri' | 'sat' | 'sun'"
                                         "long-days = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'"
 
+                                        (str "day-digits = " valid-days)
                                         "ws = #'\\s+'"
                                         "signed-digits = #'[-+]?[0-9]+'"
                                         "unsigned-digits = #'[0-9]+'"])
