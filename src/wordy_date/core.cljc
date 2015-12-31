@@ -32,7 +32,12 @@
                    "period = #'(sec(ond)?|min(ute)?|day|hour|week|month|year)s?'"
                    "dow = long-days | short-days"
                    "lone-time-stamp = ts"
-                   "ts = <(( 'at' | '@' ) ws)>? #'(\\d{1,2})(?::(\\d{2}))?(am|pm)?'"
+                   "ts = <(( 'at' | '@' ) ws)>? valid-hours (<':'> valid-mins)? meridiem?"
+                   "meridiem = ( 'am' | 'pm' )"
+
+                   (str "valid-hours = " valid-hours)
+                   (str "valid-mins = " valid-mins)
+                   (str "valid-secs = " valid-secs)
 
                    "dow-ts = dow <ws> ts"
                    "ts-ordinal-day = ts <ws> ordinal-day"
@@ -122,15 +127,14 @@
 (def parse-int #?(:clj clojure.edn/read-string
                   :cljs js/parseInt))
 
-(defn parse-time [st]
-  (let [[_ hours mins modifier] (re-find #"(\d{1,2})(?::(\d{2}))?(am|pm)?" st)
-        hours (parse-int hours)]
-    (cond-> {:hour hours :min 0}
+(defn handle-ts [& values]
+  (let [{:keys [hour min meridiem]} (into {} values)]
+    (cond-> {:hour hour :min 0}
       ;; parse the mins if they're there
-      mins (assoc :min (parse-int mins))
+      min (assoc :min min)
 
       ;; 11pm becomes 23
-      (and (= modifier "pm") (< hours 12)) (update :hour #(+ % 12)))))
+      (and (= meridiem "pm") (< hour 12)) (update :hour #(+ % 12)))))
 
 (defn parse [st]
   (let [S (insta/transform {:signed-digits parse-int
@@ -139,7 +143,10 @@
                             :short-days day-number
                             :lone-time-stamp #(timestamp-to-day (t/now) %)
                             :day-digits parse-int
-                            :ts parse-time
+                            :day-half #(vector :day-half %)
+                            :valid-hours #(vector :hour (parse-int %))
+                            :valid-mins #(vector :min (parse-int %))
+                            :ts handle-ts
                             :ordinal-day handle-ordinal-day
                             :ts-ordinal-day handle-ts-ordinal-day
                             :ordinal-day-ts handle-ordinal-day-ts
