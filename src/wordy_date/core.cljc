@@ -155,10 +155,9 @@
                             :pos-duration handle-pos-duration
                             :dow handle-dow
                             :dow-ts handle-dow-ts
-                            :quickie (fn [s]
-                                       (case s
-                                         "tomorrow" (t/plus (t/now) (t/days 1))
-                                         "now" (t/now)))}
+                            :quickie #(case %
+                                        "tomorrow" (t/plus (t/now) (t/days 1))
+                                        "now" (t/now))}
                            (wordy-date-parser st))]
     (if (= (first S) :S)
       (second S)
