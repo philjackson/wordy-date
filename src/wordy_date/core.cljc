@@ -8,37 +8,40 @@
 
 (def valid-days (str/join " | " (map #(str "'" % "'") (range 1 32))))
 
-(def wordy-date-parser (insta/parser
-                        (str/join "\n" ["S = neg-duration | pos-duration | dow-ts | dow | quickie | lone-time-stamp | ordinal-day"
-                                        "quickie = 'tomorrow' | 'now'"
+(def wordy-date-parser
+  (insta/parser
+   (str/join "\n" ["S = neg-duration | pos-duration | dow-ts | dow | quickie | lone-time-stamp | ordinal-day | ts-ordinal-day | ordinal-day-ts"
+                   "quickie = 'tomorrow' | 'now'"
 
-                                        ;; durations
-                                        "neg-duration = _multi-duration <ws> <'ago'>"
-                                        "pos-duration = _multi-duration"
-                                        "<_multi-duration> = _duration <(',' | <ws> 'and')?> (<ws> _duration)*"
-                                        "_duration = (<pre-superfluous> <ws>)? ( signed-digits | wordy-numbers ) <ws> period"
-                                        "<pre-superfluous> = 'in' | '+' | 'plus'"
+                   ;; durations
+                   "neg-duration = _multi-duration <ws> <'ago'>"
+                   "pos-duration = _multi-duration"
+                   "<_multi-duration> = _duration <(',' | <ws> 'and')?> (<ws> _duration)*"
+                   "_duration = (<pre-superfluous> <ws>)? ( signed-digits | wordy-numbers ) <ws> period"
+                   "<pre-superfluous> = 'in' | '+' | 'plus'"
 
-                                        ;; list of numbers as words 'one' | 'two'...
-                                        (str "wordy-numbers = " insta-nums)
+                   ;; list of numbers as words 'one' | 'two'...
+                   (str "wordy-numbers = " insta-nums)
 
-                                        "period = #'(sec(ond)?|min(ute)?|day|hour|week|month|year)s?'"
-                                        "dow = long-days | short-days"
-                                        "lone-time-stamp = ts"
-                                        "ts = #'(\\d{1,2})(?::(\\d{2}))?(am|pm)?'"
+                   "period = #'(sec(ond)?|min(ute)?|day|hour|week|month|year)s?'"
+                   "dow = long-days | short-days"
+                   "lone-time-stamp = ts"
+                   "ts = #'(\\d{1,2})(?::(\\d{2}))?(am|pm)?'"
 
-                                        "dow-ts = dow <ws> ts"
+                   "dow-ts = dow <ws> ts"
+                   "ts-ordinal-day = ts <ws> ordinal-day"
+                   "ordinal-day-ts = ordinal-day <ws> ts"
 
-                                        "short-days = 'mon' | 'tue' | 'wed' | 'thur' | 'fri' | 'sat' | 'sun'"
-                                        "long-days = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'"
+                   "short-days = 'mon' | 'tue' | 'wed' | 'thur' | 'fri' | 'sat' | 'sun'"
+                   "long-days = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'"
 
-                                        ;; 1st, 2nd, 31st etc.
-                                        "ordinal-day = day-digits <( 'th' | 'nd' | 'rd' | 'st')>"
+                   ;; 1st, 2nd, 31st etc.
+                   "ordinal-day = day-digits <( 'th' | 'nd' | 'rd' | 'st')>"
 
-                                        (str "day-digits = " valid-days)
-                                        "ws = #'\\s+'"
-                                        "signed-digits = #'[-+]?[0-9]+'"])
-                        :string-ci true))
+                   (str "day-digits = " valid-days)
+                   "ws = #'\\s+'"
+                   "signed-digits = #'[-+]?[0-9]+'"])
+   :string-ci true))
 
 (defn handle-duration [modifier & args]
   (reduce (fn [now [_ amount f]]
@@ -73,12 +76,18 @@
 (defn midnight [ts]
   (t/date-time (t/year ts) (t/month ts) (t/day ts) 0 0 0))
 
-(defn timestamp-to-day [ts {:keys [hour min]}]
-  (-> (midnight ts)
+(defn timestamp-to-day [date {:keys [hour min]}]
+  (-> (midnight date)
       (t/plus (t/hours hour) (t/minutes min))))
 
-(defn handle-dow-ts [dow ts]
-  (timestamp-to-day dow ts))
+(defn handle-dow-ts [date ts]
+  (timestamp-to-day date ts))
+
+(defn handle-ts-ordinal-day [ts day]
+  (timestamp-to-day day ts))
+
+(defn handle-ordinal-day-ts [day ts]
+  (timestamp-to-day day ts))
 
 (defn day-number* [day]
   (case (subs day 0 3)
@@ -126,6 +135,8 @@
                             :day-digits parse-int
                             :ts parse-time
                             :ordinal-day handle-ordinal-day
+                            :ts-ordinal-day handle-ts-ordinal-day
+                            :ordinal-day-ts handle-ordinal-day-ts
                             :wordy-numbers #(get number-map %)
                             :neg-duration handle-neg-duration
                             :pos-duration handle-pos-duration
