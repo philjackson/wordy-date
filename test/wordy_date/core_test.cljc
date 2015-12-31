@@ -74,7 +74,8 @@
 
           (testing "with timestamp"
             (match "mon 11pm"    (time/date-time 2016 10 17 23 00 00))
-            (match "tuesday 1"   (time/date-time 2016 10 18 01 00 00))
+            (match "tuesday 1pm"   (time/date-time 2016 10 18 13 00 00))
+            (match "tuesday at 1"   (time/date-time 2016 10 18 01 00 00))
             (match "tuesday 1pm" (time/date-time 2016 10 18 13 00 00)))))
 
       (testing "ordinal days"
