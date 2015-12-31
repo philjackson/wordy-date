@@ -73,18 +73,18 @@
           (match "tuesday" (time/date-time 2016 10 18 12 13 14))
 
           (testing "with timestamp"
-            (match "mon 11pm"    (time/date-time 2016 10 17 23 00 00))
-            (match "tuesday 1pm"   (time/date-time 2016 10 18 13 00 00))
-            (match "tuesday at 1"   (time/date-time 2016 10 18 01 00 00))
-            (match "tuesday 1pm" (time/date-time 2016 10 18 13 00 00)))))
+            (match "mon 11pm"     (time/date-time 2016 10 17 23 00 00))
+            (match "tuesday 1pm"  (time/date-time 2016 10 18 13 00 00))
+            (match "tuesday at 1" (time/date-time 2016 10 18 01 00 00))
+            (match "tuesday 1pm"  (time/date-time 2016 10 18 13 00 00)))))
 
       (testing "ordinal days"
         (testing "in the past (translates to next month)"
           (match "1st" (time/date-time 2016 11 01 00 00 00)))
 
         (testing "in the future (translates to this month)"
-          (match "22nd"     (time/date-time 2016 10 22 00 00 00))
-          (match "1pm 22nd" (time/date-time 2016 10 22 13 00 00))
-          (match "22nd 1am" (time/date-time 2016 10 22 01 00 00))
-          (match "22nd @ 1am" (time/date-time 2016 10 22 01 00 00))
+          (match "22nd"        (time/date-time 2016 10 22 00 00 00))
+          (match "1pm 22nd"    (time/date-time 2016 10 22 13 00 00))
+          (match "22nd 1am"    (time/date-time 2016 10 22 01 00 00))
+          (match "22nd @ 1am"  (time/date-time 2016 10 22 01 00 00))
           (match "22nd at 1am" (time/date-time 2016 10 22 01 00 00)))))))
