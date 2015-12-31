@@ -97,8 +97,7 @@
 
 (defn timestamp-to-today [{:keys [hour min]}]
   (-> (midnight)
-      (t/plus (t/hours hour))
-      (t/plus (t/minutes min)))) 
+      (t/plus (t/hours hour) (t/minutes min)))) 
 
 (defn parse [st]
   (let [S (insta/transform {:digits parse-int
