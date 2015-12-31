@@ -17,17 +17,6 @@
 
 (def fake-now (time/date-time 2016 10 11 12 13 14)) ; => "2016-10-11T12:13:14.000Z"
 
-#_(deftest parse-timestamp-test
-    (is (= {:hour 12 :min 0} (wd/parse-time "12am")))
-    (is (= {:hour 12 :min 30} (wd/parse-time "12:30am")))
-    (is (= {:hour 12 :min 30} (wd/parse-time "12:30")))
-    (is (= {:hour 23 :min 30} (wd/parse-time "23:30")))
-    (is (= {:hour 23 :min 30} (wd/parse-time "11:30pm"))))
-
-#_(deftest errors-test
-    (testing "Errors for certain things"
-      (is (= [] (wd/parse 34)))))
-
 (deftest human-date-test
   (let [tomorrow (time/plus fake-now (time/days 1))
         match (fn [st date] (is (= (wd/parse st) date)))]
