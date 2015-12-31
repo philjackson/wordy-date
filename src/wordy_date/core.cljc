@@ -31,7 +31,8 @@
                                         "long-days = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'"
 
                                         "ws = #'\\s+'"
-                                        "signed-digits = #'-?[0-9]+'"])
+                                        "signed-digits = #'[-+]?[0-9]+'"
+                                        "unsigned-digits = #'[0-9]+'"])
                         :string-ci true))
 
 (defn handle-duration [modifier & args]
