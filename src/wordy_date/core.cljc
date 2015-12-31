@@ -23,7 +23,7 @@
                                         "period = #'(sec(ond)?|min(ute)?|day|hour|week|month|year)s?'"
                                         "dow = long-days | short-days"
                                         "lone-time-stamp = ts"
-                                        "ts = #'(\\d{2})(?::(\\d{2}))?(am|pm)?'"
+                                        "ts = #'(\\d{1,2})(?::(\\d{2}))?(am|pm)?'"
 
                                         "dow-ts = dow <ws> ts"
 
@@ -94,7 +94,7 @@
                   :cljs js/parseInt))
 
 (defn parse-time [st]
-  (let [[_ hours mins modifier] (re-find #"(\d{2})(?::(\d{2}))?(am|pm)?" st)
+  (let [[_ hours mins modifier] (re-find #"(\d{1,2})(?::(\d{2}))?(am|pm)?" st)
         hours (parse-int hours)]
     (cond-> {:hour hours :min 0}
       ;; parse the mins if they're there

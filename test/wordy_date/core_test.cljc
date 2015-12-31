@@ -72,9 +72,14 @@
 
           (t/testing "with timestamp"
             (match "wed 12:30" (time/date-time 2016 10 12 12 30 00))
-            (match "sun 12am" (time/date-time 2016 10 16 12 00 00))))
+            (match "sun 12am"  (time/date-time 2016 10 16 12 00 00))))
 
         (t/testing "next week"
           ;; becomes next week (our test date is a tuesday)
-          (match "monday"  (time/date-time  2016 10 17 12 13 14))
-          (match "tuesday" (time/date-time 2016 10 18 12 13 14)))))))
+          (match "monday"  (time/date-time 2016 10 17 12 13 14))
+          (match "tuesday" (time/date-time 2016 10 18 12 13 14))
+
+          (t/testing "with timestamp"
+            (match "mon 11pm"    (time/date-time 2016 10 17 23 00 00))
+            (match "tuesday 1"   (time/date-time 2016 10 18 01 00 00))
+            (match "tuesday 1pm" (time/date-time 2016 10 18 13 00 00))))))))
