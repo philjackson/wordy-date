@@ -26,7 +26,7 @@
                    "period = #'(sec(ond)?|min(ute)?|day|hour|week|month|year)s?'"
                    "dow = long-days | short-days"
                    "lone-time-stamp = ts"
-                   "ts = #'(\\d{1,2})(?::(\\d{2}))?(am|pm)?'"
+                   "ts = <(( 'at' | '@' ) ws)>? #'(\\d{1,2})(?::(\\d{2}))?(am|pm)?'"
 
                    "dow-ts = dow <ws> ts"
                    "ts-ordinal-day = ts <ws> ordinal-day"
