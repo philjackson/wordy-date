@@ -35,6 +35,7 @@
                    "ts = <(( 'at' | '@' ) ws)>? valid-hours (<':'> valid-mins)? meridiem?"
                    "meridiem = ( 'am' | 'pm' )"
 
+                   (str "valid-days = " valid-days)
                    (str "valid-hours = " valid-hours)
                    (str "valid-mins = " valid-mins)
                    (str "valid-secs = " valid-secs)
@@ -47,9 +48,8 @@
                    "long-days = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'"
 
                    ;; 1st, 2nd, 31st etc.
-                   "ordinal-day = day-digits <( 'th' | 'nd' | 'rd' | 'st')>"
+                   "ordinal-day = valid-days <( 'th' | 'nd' | 'rd' | 'st')>"
 
-                   (str "day-digits = " valid-days)
                    "ws = #'\\s+'"
                    "signed-digits = #'[-+]?[0-9]+'"])
    :string-ci true))
@@ -142,7 +142,7 @@
                             :long-days day-number
                             :short-days day-number
                             :lone-time-stamp #(timestamp-to-day (t/now) %)
-                            :day-digits parse-int
+                            :valid-days parse-int
                             :day-half #(vector :day-half %)
                             :valid-hours #(vector :hour (parse-int %))
                             :valid-mins #(vector :min (parse-int %))
