@@ -18,6 +18,7 @@ Making the assumption today's time is `2016-10-11T12:13:14.000Z`:
 
 Some examples yanked straight from the tests:
 
+    (parse "December 1st @ 1pm")
     (parse "now")
     (parse "tomorrow")
     (parse "10 seconds")
