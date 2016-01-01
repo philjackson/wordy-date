@@ -39,10 +39,11 @@
 
 (def wordy-date-parser
   (insta/parser
-   (str/join "\n" ["S = neg-duration | pos-duration | day-words-ts | day-words | quickie | lone-time-stamp | ordinal-day | ts-ordinal-day | ordinal-day-ts"
+   (str/join "\n" ["S = neg-duration | pos-duration | day-words-ts | day-words | quickie | lone-time-stamp | ordinal-day | ts-ordinal-day | ordinal-day-ts | month-ordinal-day | month-ordinal-day-ts"
                    ;; "types"
                    "period-words = #'(sec(ond)?|min(ute)?|day|hour|week|month|year)s?'"
-                   "ordinal-day = day-nums <( 'th' | 'nd' | 'rd' | 'st')>" ; 1st, 2nd..
+                   "ordinal-day = day-nums <ordinal-modifier>" ; 1st, 2nd..
+                   "<ordinal-modifier> = ( 'th' | 'nd' | 'rd' | 'st')"
                    (str "number-words = " number-words) ; one, two...
                    (str "day-nums = " day-nums)         ; 1..31
                    (str "hour-nums = " hour-nums)       ; 0..23
@@ -65,6 +66,9 @@
                    "lone-time-stamp = ts"
                    "ts = <(( 'at' | '@' ) ws)>? hour-nums (<':'> min-nums)? meridiem?"
                    "meridiem = ( 'am' | 'pm' )"
+
+                   "month-ordinal-day = month-words <ws> (day-nums <ordinal-modifier>)"
+                   "month-ordinal-day-ts = month-ordinal-day <ws> ts"
 
                    ;; things with timestamps
                    "day-words-ts = day-words <ws> ts"
@@ -173,6 +177,16 @@
       ;; 11pm becomes 23
       (and (= meridiem "pm") (< hour 12)) (update :hour #(+ % 12)))))
 
+(defn month-ordinal-day-handler [month day]
+  (let [now (t/now)]
+    (if (< month (t/month now))
+      (let [next-year (t/plus now (t/years 1))]
+        (t/date-time (t/year next-year) month day))
+      (t/date-time (t/year now) month day))))
+
+(defn month-ordinal-day-ts-handler [day ts]
+  (timestamp-to-day day ts))
+
 (defn parse [st]
   (let [S (insta/transform {:signed-digits parse-int
                             :period-words period-word-translation
@@ -180,8 +194,12 @@
                             :day-nums parse-int
                             :day-half #(vector :day-half %)
                             :hour-nums #(vector :hour (parse-int %))
+                            :month-ordinal-day month-ordinal-day-handler
+                            :month-ordinal-day-ts month-ordinal-day-ts-handler
                             :min-nums #(vector :min (parse-int %))
+                            :month-words month-word-translation
                             :ts handle-ts
+                            :_ordinal-day parse-int
                             :ordinal-day handle-ordinal-day
                             :ts-ordinal-day handle-ts-ordinal-day
                             :ordinal-day-ts handle-ordinal-day-ts
