@@ -24,6 +24,19 @@
                                           "saturday"
                                           "sunday"]))))
 
+(def month-words (make-insta-strings ["jan" "january"
+                                      "feb" "february"
+                                      "mar" "march"
+                                      "apr" "april"
+                                      "may" "may"
+                                      "jun" "june"
+                                      "jul" "july"
+                                      "aug" "august"
+                                      "sep" "september"
+                                      "oct" "october"
+                                      "nov" "november"
+                                      "dec" "december"]))
+
 (def wordy-date-parser
   (insta/parser
    (str/join "\n" ["S = neg-duration | pos-duration | day-words-ts | day-words | quickie | lone-time-stamp | ordinal-day | ts-ordinal-day | ordinal-day-ts"
@@ -36,6 +49,7 @@
                    (str "min-nums = " min-nums)         ; 0..59
                    (str "sec-nums = " sec-nums)         ; 0..59
                    (str "day-words = " day-words)       ; mon, monday, tue...
+                   (str "month-words = " month-words)   ; jan, january, feb...
 
                    ;; random
                    "quickie = 'tomorrow' | 'now'"
@@ -71,9 +85,7 @@
     "sat" 6
     "sun" 7))
 
-(def day-number (memoize day-number*))
-
-(defn period-words-translation* [st]
+(defn period-word-translation* [st]
   (case (subs st 0 3)
     "sec" t/seconds
     "min" t/minutes
@@ -83,7 +95,24 @@
     "mon" t/months
     "yea" t/years))
 
-(def period-words-translation (memoize period-words-translation*))
+(defn month-word-translation* [st]
+  (case (subs st 0 3)
+    "jan" 1
+    "feb" 2
+    "mar" 3
+    "apr" 4
+    "may" 5
+    "jun" 6
+    "jul" 7
+    "aug" 8
+    "sep" 9
+    "oct" 10
+    "nov" 11
+    "dec" 12))
+
+(def day-number (memoize day-number*))
+(def period-word-translation (memoize period-word-translation*))
+(def month-word-translation (memoize month-word-translation*))
 
 (defn handle-duration [modifier & args]
   (reduce (fn [now [_ amount f]]
@@ -146,7 +175,7 @@
 
 (defn parse [st]
   (let [S (insta/transform {:signed-digits parse-int
-                            :period-words period-words-translation
+                            :period-words period-word-translation
                             :lone-time-stamp #(timestamp-to-day (t/now) %)
                             :day-nums parse-int
                             :day-half #(vector :day-half %)
