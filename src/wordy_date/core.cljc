@@ -9,49 +9,81 @@
 (defn make-insta-strings [things]
   (str/join " | " (map #(str "'" % "'") things)))
 
-(def valid-number-words (make-insta-strings (keys number-map)))
-(def valid-days (make-insta-strings (range 1 32)))
-(def valid-hours (make-insta-strings (range 0 24)))
-(def valid-mins (make-insta-strings (range 0 60)))
-(def valid-secs valid-mins)
+(def number-words (make-insta-strings (keys number-map)))
+(def day-nums (make-insta-strings (range 1 32)))
+(def hour-nums (make-insta-strings (range 0 24)))
+(def min-nums (make-insta-strings (range 0 60)))
+(def sec-nums min-nums)
+(def day-words (make-insta-strings (flatten
+                                    (map #(vector % (subs % 0 3))
+                                         ["monday"
+                                          "tuesday"
+                                          "wednesday"
+                                          "thursday"
+                                          "friday"
+                                          "saturday"
+                                          "sunday"]))))
 
 (def wordy-date-parser
   (insta/parser
-   (str/join "\n" ["S = neg-duration | pos-duration | dow-ts | dow | quickie | lone-time-stamp | ordinal-day | ts-ordinal-day | ordinal-day-ts"
+   (str/join "\n" ["S = neg-duration | pos-duration | day-words-ts | day-words | quickie | lone-time-stamp | ordinal-day | ts-ordinal-day | ordinal-day-ts"
+                   ;; "types"
+                   "period-words = #'(sec(ond)?|min(ute)?|day|hour|week|month|year)s?'"
+                   "ordinal-day = day-nums <( 'th' | 'nd' | 'rd' | 'st')>" ; 1st, 2nd..
+                   (str "number-words = " number-words) ; one, two...
+                   (str "day-nums = " day-nums)         ; 1..31
+                   (str "hour-nums = " hour-nums)       ; 0..23
+                   (str "min-nums = " min-nums)         ; 0..59
+                   (str "sec-nums = " sec-nums)         ; 0..59
+                   (str "day-words = " day-words)       ; mon, monday, tue...
+
+                   ;; random
                    "quickie = 'tomorrow' | 'now'"
 
                    ;; durations
                    "neg-duration = _multi-duration <ws> <'ago'>"
                    "pos-duration = _multi-duration"
                    "<_multi-duration> = _duration <(',' | <ws> 'and')?> (<ws> _duration)*"
-                   "_duration = (<pre-superfluous> <ws>)? ( signed-digits | wordy-numbers ) <ws> period"
+                   "_duration = (<pre-superfluous> <ws>)? ( signed-digits | number-words ) <ws> period-words"
                    "<pre-superfluous> = 'in' | '+' | 'plus'"
 
-                   "period = #'(sec(ond)?|min(ute)?|day|hour|week|month|year)s?'"
-                   "dow = long-days | short-days"
+                   ;; time stamps
                    "lone-time-stamp = ts"
-                   "ts = <(( 'at' | '@' ) ws)>? valid-hours (<':'> valid-mins)? meridiem?"
+                   "ts = <(( 'at' | '@' ) ws)>? hour-nums (<':'> min-nums)? meridiem?"
                    "meridiem = ( 'am' | 'pm' )"
 
-                   (str "wordy-numbers = " valid-number-words) ; one, two...
-                   (str "valid-days = " valid-days)            ; 1..31
-                   (str "valid-hours = " valid-hours)          ; 0..23
-                   (str "valid-mins = " valid-mins)            ; 0..59
-                   (str "valid-secs = " valid-secs)            ; 0..59
-
-                   "dow-ts = dow <ws> ts"
+                   ;; things with timestamps
+                   "day-words-ts = day-words <ws> ts"
                    "ts-ordinal-day = ts <ws> ordinal-day"
                    "ordinal-day-ts = ordinal-day <ws> ts"
-
-                   "short-days = 'mon' | 'tue' | 'wed' | 'thur' | 'fri' | 'sat' | 'sun'"
-                   "long-days = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday'"
-
-                   ;; 1st, 2nd, 31st etc.
-                   "ordinal-day = valid-days <( 'th' | 'nd' | 'rd' | 'st')>"
 
                    "ws = #'\\s+'"
                    "signed-digits = #'[-+]?[0-9]+'"])
    :string-ci true))
+
+(defn day-number* [day]
+  (case (subs day 0 3)
+    "mon" 1
+    "tue" 2
+    "wed" 3
+    "thu" 4
+    "fri" 5
+    "sat" 6
+    "sun" 7))
+
+(def day-number (memoize day-number*))
+
+(defn period-words-translation* [st]
+  (case (subs st 0 3)
+    "sec" t/seconds
+    "min" t/minutes
+    "day" t/days
+    "hou" t/hours
+    "wee" t/weeks
+    "mon" t/months
+    "yea" t/years))
+
+(def period-words-translation (memoize period-words-translation*))
 
 (defn handle-duration [modifier & args]
   (reduce (fn [now [_ amount f]]
@@ -63,17 +95,18 @@
 (defn handle-pos-duration [& args]
   (apply handle-duration t/plus args))
 
-(defn handle-dow [dow]
-  (let [now (t/now)
-        our-dow (t/day-of-week now)]
-    (if (< our-dow dow)
+(defn handle-day-words [day-words]
+  (let [num (day-number day-words)
+        now (t/now)
+        our-day-words (t/day-of-week now)]
+    (if (< our-day-words num)
       ;; this occurs this week as the day given is "after" now
-      (t/plus now (t/days (- dow our-dow)))
+      (t/plus now (t/days (- num our-day-words)))
 
       ;; we move to next week as the day asked for is "before" now
       (let [next-week (t/plus (t/now) (t/weeks 1))
-            our-dow (t/day-of-week next-week)]
-        (t/plus next-week (t/days (- dow our-dow)))))))
+            our-day-words (t/day-of-week next-week)]
+        (t/plus next-week (t/days (- num our-day-words)))))))
 
 (defn handle-ordinal-day [day]
   (let [now (t/now)]
@@ -90,7 +123,7 @@
   (-> (midnight date)
       (t/plus (t/hours hour) (t/minutes min))))
 
-(defn handle-dow-ts [date ts]
+(defn handle-day-words-ts [date ts]
   (timestamp-to-day date ts))
 
 (defn handle-ts-ordinal-day [ts day]
@@ -98,30 +131,6 @@
 
 (defn handle-ordinal-day-ts [day ts]
   (timestamp-to-day day ts))
-
-(defn day-number* [day]
-  (case (subs day 0 3)
-    "mon" 1
-    "tue" 2
-    "wed" 3
-    "thu" 4
-    "fri" 5
-    "sat" 6
-    "sun" 7))
-
-(def day-number (memoize day-number*))
-
-(defn period-translation* [st]
-  (case (subs st 0 3)
-    "sec" t/seconds
-    "min" t/minutes
-    "day" t/days
-    "hou" t/hours
-    "wee" t/weeks
-    "mon" t/months
-    "yea" t/years))
-
-(def period-translation (memoize period-translation*))
 
 (def parse-int #?(:clj clojure.edn/read-string
                   :cljs js/parseInt))
@@ -137,23 +146,21 @@
 
 (defn parse [st]
   (let [S (insta/transform {:signed-digits parse-int
-                            :period period-translation
-                            :long-days day-number
-                            :short-days day-number
+                            :period-words period-words-translation
                             :lone-time-stamp #(timestamp-to-day (t/now) %)
-                            :valid-days parse-int
+                            :day-nums parse-int
                             :day-half #(vector :day-half %)
-                            :valid-hours #(vector :hour (parse-int %))
-                            :valid-mins #(vector :min (parse-int %))
+                            :hour-nums #(vector :hour (parse-int %))
+                            :min-nums #(vector :min (parse-int %))
                             :ts handle-ts
                             :ordinal-day handle-ordinal-day
                             :ts-ordinal-day handle-ts-ordinal-day
                             :ordinal-day-ts handle-ordinal-day-ts
-                            :wordy-numbers #(get number-map %)
+                            :number-words #(get number-map %)
                             :neg-duration handle-neg-duration
                             :pos-duration handle-pos-duration
-                            :dow handle-dow
-                            :dow-ts handle-dow-ts
+                            :day-words handle-day-words
+                            :day-words-ts handle-day-words-ts
                             :quickie #(case %
                                         "tomorrow" (t/plus (t/now) (t/days 1))
                                         "now" (t/now))}
