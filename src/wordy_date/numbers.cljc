@@ -21,5 +21,3 @@
                  "eighty-six" 86 "eighty-seven" 87 "eighty-eight" 88 "eighty-nine" 89 "ninety" 90
                  "ninety-one" 91 "ninety-two" 92 "ninety-three" 93 "ninety-four" 94 "ninety-five" 95
                  "ninety-six" 96 "ninety-seven" 97 "ninety-eight" 98 "ninety-nine" 99})
-
-(def insta-nums (str/join " | " (map #(str "'" % "'") (keys number-map))))

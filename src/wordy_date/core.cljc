@@ -1,7 +1,7 @@
 (ns wordy-date.core
   (:require [clojure.string :as str]
             [instaparse.core :as insta]
-            [wordy-date.numbers :refer [insta-nums number-map]]
+            [wordy-date.numbers :refer [number-map]]
             #?(:clj  [clj-time.core :as t]
                :cljs [cljs-time.core :as t])
             #?(:clj [clojure.edn])))
@@ -9,9 +9,10 @@
 (defn make-insta-strings [things]
   (str/join " | " (map #(str "'" % "'") things)))
 
+(def valid-number-words (make-insta-strings (keys number-map)))
 (def valid-days (make-insta-strings (range 1 32)))
-(def valid-hours (make-insta-strings (range 0 25)))
-(def valid-mins (make-insta-strings (range 0 61)))
+(def valid-hours (make-insta-strings (range 0 24)))
+(def valid-mins (make-insta-strings (range 0 60)))
 (def valid-secs valid-mins)
 
 (def wordy-date-parser
@@ -26,19 +27,17 @@
                    "_duration = (<pre-superfluous> <ws>)? ( signed-digits | wordy-numbers ) <ws> period"
                    "<pre-superfluous> = 'in' | '+' | 'plus'"
 
-                   ;; list of numbers as words 'one' | 'two'...
-                   (str "wordy-numbers = " insta-nums)
-
                    "period = #'(sec(ond)?|min(ute)?|day|hour|week|month|year)s?'"
                    "dow = long-days | short-days"
                    "lone-time-stamp = ts"
                    "ts = <(( 'at' | '@' ) ws)>? valid-hours (<':'> valid-mins)? meridiem?"
                    "meridiem = ( 'am' | 'pm' )"
 
-                   (str "valid-days = " valid-days)
-                   (str "valid-hours = " valid-hours)
-                   (str "valid-mins = " valid-mins)
-                   (str "valid-secs = " valid-secs)
+                   (str "wordy-numbers = " valid-number-words) ; one, two...
+                   (str "valid-days = " valid-days)            ; 1..31
+                   (str "valid-hours = " valid-hours)          ; 0..23
+                   (str "valid-mins = " valid-mins)            ; 0..59
+                   (str "valid-secs = " valid-secs)            ; 0..59
 
                    "dow-ts = dow <ws> ts"
                    "ts-ordinal-day = ts <ws> ordinal-day"
