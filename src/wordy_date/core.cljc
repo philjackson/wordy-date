@@ -156,15 +156,6 @@
   (-> (midnight date)
       (t/plus (t/hours hour) (t/minutes min))))
 
-(defn handle-day-words-ts [date ts]
-  (timestamp-to-day date ts))
-
-(defn handle-ts-ordinal-day [ts day]
-  (timestamp-to-day day ts))
-
-(defn handle-ordinal-day-ts [day ts]
-  (timestamp-to-day day ts))
-
 (def parse-int #?(:clj clojure.edn/read-string
                   :cljs js/parseInt))
 
@@ -184,30 +175,30 @@
         (t/date-time (t/year next-year) month day))
       (t/date-time (t/year now) month day))))
 
-(defn month-ordinal-day-ts-handler [day ts]
-  (timestamp-to-day day ts))
-
 (defn parse [st]
   (let [S (insta/transform {:signed-digits parse-int
                             :period-words period-word-translation
-                            :lone-time-stamp #(timestamp-to-day (t/now) %)
                             :day-nums parse-int
                             :day-half #(vector :day-half %)
                             :hour-nums #(vector :hour (parse-int %))
                             :month-ordinal-day month-ordinal-day-handler
-                            :month-ordinal-day-ts month-ordinal-day-ts-handler
                             :min-nums #(vector :min (parse-int %))
                             :month-words month-word-translation
                             :ts handle-ts
                             :_ordinal-day parse-int
                             :ordinal-day handle-ordinal-day
-                            :ts-ordinal-day handle-ts-ordinal-day
-                            :ordinal-day-ts handle-ordinal-day-ts
+
+                            ;; timestamps
+                            :lone-time-stamp #(timestamp-to-day (t/now) %)
+                            :month-ordinal-day-ts timestamp-to-day
+                            :ts-ordinal-day #(timestamp-to-day %2 %1)
+                            :ordinal-day-ts timestamp-to-day
+                            :day-words-ts timestamp-to-day
+
                             :number-words #(get number-map %)
                             :neg-duration handle-neg-duration
                             :pos-duration handle-pos-duration
                             :day-words handle-day-words
-                            :day-words-ts handle-day-words-ts
                             :quickie #(case %
                                         "tomorrow" (t/plus (t/now) (t/days 1))
                                         "now" (t/now))}
