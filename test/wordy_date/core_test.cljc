@@ -62,6 +62,8 @@
           (match "wed"       (time/date-time 2016 10 12 12 13 14))
           (match "sunday"    (time/date-time 2016 10 16 12 13 14))
           (match "sun"       (time/date-time 2016 10 16 12 13 14))
+          (match "tues"      (time/date-time 2016 10 18 12 13 14))
+          (match "tue"      (time/date-time 2016 10 18 12 13 14))
 
           (testing "with timestamp"
             (match "wed 12:30" (time/date-time 2016 10 12 12 30 00))

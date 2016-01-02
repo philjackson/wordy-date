@@ -15,14 +15,16 @@
 (def min-nums (make-insta-strings (range 0 60)))
 (def sec-nums min-nums)
 (def day-words (make-insta-strings (flatten
-                                    (map #(vector % (subs % 0 3))
-                                         ["monday"
-                                          "tuesday"
-                                          "wednesday"
-                                          "thursday"
-                                          "friday"
-                                          "saturday"
-                                          "sunday"]))))
+                                    (conj (map #(vector % (subs % 0 3))
+                                               ["monday"
+                                                "tuesday"
+                                                "wednesday"
+                                                "thursday"
+                                                "friday"
+                                                "saturday"
+                                                "sunday"])
+                                          "tues"
+                                          "thurs"))))
 
 (def month-words (make-insta-strings ["jan" "january"
                                       "feb" "february"
