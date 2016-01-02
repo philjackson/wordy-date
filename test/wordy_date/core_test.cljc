@@ -94,7 +94,9 @@
       (testing "month stuff"
         (testing "in the past (translates to next month)"
           (match "July 1st" (time/date-time 2017 07 01 00 00 00))
-          (match "July 1st 13:21" (time/date-time 2017 07 01 13 21 00)))
+          (match "1st July" (time/date-time 2017 07 01 00 00 00))
+          (match "July 1st 13:21" (time/date-time 2017 07 01 13 21 00))
+          (match "1st July 13:21" (time/date-time 2017 07 01 13 21 00)))
 
         (testing "in the future (translates to this month)"
           (match "December 22nd" (time/date-time 2016 12 22 00 00 00))

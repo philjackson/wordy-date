@@ -41,7 +41,7 @@
 
 (def wordy-date-parser
   (insta/parser
-   (str/join "\n" ["S = neg-duration | pos-duration | day-words-ts | day-words | quickie | lone-time-stamp | ordinal-day | ts-ordinal-day | ordinal-day-ts | month-ordinal-day | month-ordinal-day-ts"
+   (str/join "\n" ["S = neg-duration | pos-duration | day-words-ts | day-words | quickie | lone-time-stamp | ordinal-day | ts-ordinal-day | ordinal-day-ts | month-ordinal-day | month-ordinal-day-ts | ordinal-day-month | ordinal-day-month-ts"
                    ;; "types"
                    "period-words = #'(sec(ond)?|min(ute)?|day|hour|week|month|year)s?'"
                    "ordinal-day = day-nums <ordinal-modifier>" ; 1st, 2nd..
@@ -71,6 +71,8 @@
 
                    "month-ordinal-day = month-words <ws> (day-nums <ordinal-modifier>)"
                    "month-ordinal-day-ts = month-ordinal-day <ws> ts"
+                   "ordinal-day-month = (day-nums <ordinal-modifier>) <ws> month-words"
+                   "ordinal-day-month-ts = ordinal-day-month <ws> ts"
 
                    ;; things with timestamps
                    "day-words-ts = day-words <ws> ts"
@@ -184,6 +186,8 @@
                             :day-half #(vector :day-half %)
                             :hour-nums #(vector :hour (parse-int %))
                             :month-ordinal-day month-ordinal-day-handler
+                            :ordinal-day-month #(month-ordinal-day-handler %2 %1)
+
                             :min-nums #(vector :min (parse-int %))
                             :month-words month-word-translation
                             :ts handle-ts
@@ -193,6 +197,7 @@
                             ;; timestamps
                             :lone-time-stamp #(timestamp-to-day (t/now) %)
                             :month-ordinal-day-ts timestamp-to-day
+                            :ordinal-day-month-ts timestamp-to-day
                             :ts-ordinal-day #(timestamp-to-day %2 %1)
                             :ordinal-day-ts timestamp-to-day
                             :day-words-ts timestamp-to-day
