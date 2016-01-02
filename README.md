@@ -8,7 +8,7 @@ date relative to now. Clojurescript or Clojure compatible.
 In your project.clj; add the following line to the `:dependencies`
 section:
 
-    [philjackson/wordy-date "0.1.2"]
+    [philjackson/wordy-date "0.1.4"]
 
 In your source:
 
