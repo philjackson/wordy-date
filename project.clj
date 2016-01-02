@@ -1,4 +1,4 @@
-(defproject philjackson/wordy-date "0.1.2"
+(defproject philjackson/wordy-date "0.1.3"
   :description "A library that converts a date described as a human into an actual date."
   :url "https://github.com/philjackson/wordy-date"
   :license {:name "Eclipse Public License"
