@@ -210,6 +210,5 @@
                                         "tomorrow" (t/plus (t/now) (t/days 1))
                                         "now" (t/now))}
                            (wordy-date-parser st))]
-    (if (= (first S) :S)
-      (second S)
-      S)))
+    (when (= (first S) :S)
+      (second S))))
