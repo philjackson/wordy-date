@@ -145,7 +145,11 @@
             our-day-words (t/day-of-week next-week)]
         (t/plus next-week (t/days (- num our-day-words)))))))
 
-(defn handle-ordinal-day [day]
+(defn handle-ordinal-day
+  "Given a `day` which has been ordinal, transform to either that day
+  later this week, or if the day given has already passed, that day
+  next month."
+  [day]
   (let [now (t/now)]
     (if (< day (t/day now))
       ;; clj-time is smart and won't take us two months ahead
@@ -153,17 +157,24 @@
         (t/date-time (t/year next-month) (t/month next-month) day))
       (t/date-time (t/year now) (t/month now) day))))
 
-(defn midnight [ts]
-  (t/date-time (t/year ts) (t/month ts) (t/day ts) 0 0 0))
+(defn midnight
+  "Returns midnight for the date provided at `date`."
+  [date]
+  (t/date-time (t/year date) (t/month date) (t/day date) 0 0 0))
 
-(defn timestamp-to-day [date {:keys [hour min]}]
+(defn timestamp-to-day
+  "Given a timestamp in the format `{:hour h :min m}`, set the
+  time for given `date` to that time."
+  [date {:keys [hour min]}]
   (-> (midnight date)
       (t/plus (t/hours hour) (t/minutes min))))
 
 (def parse-int #?(:clj clojure.edn/read-string
                   :cljs js/parseInt))
 
-(defn handle-ts [& values]
+(defn handle-ts
+  "Convert `{:hour 2 :min 3 :meridiem 'pm'}` into a 24-hour timestamp."
+  [& values]
   (let [{:keys [hour min meridiem]} (into {} values)]
     (cond-> {:hour hour :min 0}
       ;; parse the mins if they're there
