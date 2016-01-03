@@ -41,7 +41,7 @@
 
 (def wordy-date-parser
   (insta/parser
-   (str/join "\n" ["S = neg-duration | pos-duration | day-words-ts | day-words | quickie | lone-time-stamp | ordinal-day | ts-ordinal-day | ordinal-day-ts | month-ordinal-day | month-ordinal-day-ts | ordinal-day-month | ordinal-day-month-ts"
+   (str/join "\n" ["S = tomorrow-ts | neg-duration | pos-duration | day-words-ts | day-words | quickie | lone-time-stamp | ordinal-day | ts-ordinal-day | ordinal-day-ts | month-ordinal-day | month-ordinal-day-ts | ordinal-day-month | ordinal-day-month-ts | ts-tomorrow"
                    ;; "types"
                    "period-words = #'(sec(ond)?|min(ute)?|day|hour|week|month|year)s?'"
                    "ordinal-day = day-nums <ordinal-modifier>" ; 1st, 2nd..
@@ -56,6 +56,8 @@
 
                    ;; random
                    "quickie = 'tomorrow' | 'now' | 'next week'"
+                   "tomorrow-ts = 'tomorrow' <ws> ts"
+                   "ts-tomorrow = ts <ws> 'tomorrow'"
 
                    ;; durations
                    "neg-duration = _multi-duration <ws> <'ago'>"
@@ -173,7 +175,8 @@
                   :cljs js/parseInt))
 
 (defn handle-ts
-  "Convert `[[:hour 2] [:min 3] [:meridiem 'pm']]` into a 24-hour timestamp."
+  "Convert `[[:hour 2] [:min 3] [:meridiem 'pm']]` into a 24-hour
+  timestamp."
   [& values]
   (let [{:keys [hour min meridiem]} (into {} values)]
     (cond-> {:hour hour :min 0}
@@ -217,10 +220,14 @@
                             :neg-duration handle-neg-duration
                             :pos-duration handle-pos-duration
                             :day-words handle-day-words
+
                             :quickie #(case %
                                         "tomorrow" (t/plus (t/now) (t/days 1))
                                         "next week" (handle-day-words "monday")
-                                        "now" (t/now))}
+                                        "now" (t/now))
+
+                            :ts-tomorrow (fn [ts _] (timestamp-to-day (t/plus (t/now) (t/days 1)) ts))
+                            :tomorrow-ts (fn [_ ts] (timestamp-to-day (t/plus (t/now) (t/days 1)) ts))}
                            (wordy-date-parser st))]
     (when (= (first S) :S)
       (second S))))
