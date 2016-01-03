@@ -173,7 +173,7 @@
                   :cljs js/parseInt))
 
 (defn handle-ts
-  "Convert `{:hour 2 :min 3 :meridiem 'pm'}` into a 24-hour timestamp."
+  "Convert `[[:hour 2] [:min 3] [:meridiem 'pm']]` into a 24-hour timestamp."
   [& values]
   (let [{:keys [hour min meridiem]} (into {} values)]
     (cond-> {:hour hour :min 0}
