@@ -1,4 +1,4 @@
-# human-dates
+# wordy-date
 
 A library that converts a date described as a human into an actual
 date relative to now. Clojurescript or Clojure compatible.
@@ -21,6 +21,7 @@ Some examples yanked straight from the tests:
     (parse "December 1st @ 1pm")
     (parse "now")
     (parse "tomorrow")
+    (parse "tomorrow at 3pm")
     (parse "10 seconds")
     (parse "ten seconds")
     (parse "10 mins")
