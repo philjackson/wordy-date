@@ -55,7 +55,7 @@
                    (str "month-words = " month-words)   ; jan, january, feb...
 
                    ;; random
-                   "quickie = 'tomorrow' | 'now'"
+                   "quickie = 'tomorrow' | 'now' | 'next week'"
 
                    ;; durations
                    "neg-duration = _multi-duration <ws> <'ago'>"
@@ -208,6 +208,7 @@
                             :day-words handle-day-words
                             :quickie #(case %
                                         "tomorrow" (t/plus (t/now) (t/days 1))
+                                        "next week" (handle-day-words "monday")
                                         "now" (t/now))}
                            (wordy-date-parser st))]
     (when (= (first S) :S)

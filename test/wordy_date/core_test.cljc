@@ -71,6 +71,7 @@
 
         (testing "next week"
           ;; becomes next week (our test date is a tuesday)
+          (match "next week"  (time/date-time 2016 10 17 12 13 14))
           (match "monday"  (time/date-time 2016 10 17 12 13 14))
           (match "tuesday" (time/date-time 2016 10 18 12 13 14))
 
