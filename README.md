@@ -1,7 +1,7 @@
 # wordy-date
 
-A library that converts a date described as a human into an actual
-date relative to now. Clojurescript or Clojure compatible.
+A clojure/clojurescript library that converts a date described as a
+human into an actual date relative to now.
 
 ## Usage
 
