@@ -95,11 +95,15 @@
 
       (testing "month stuff"
         (testing "in the past (translates to next month)"
-          (is (= (parse "July 1st") (time/date-time 2017 07 01 00 00 00)))
-          (is (= (parse "1st July") (time/date-time 2017 07 01 00 00 00)))
-          (is (= (parse "July 1st 13:21") (time/date-time 2017 07 01 13 21 00)))
-          (is (= (parse "1st July 13:21") (time/date-time 2017 07 01 13 21 00))))
-
+          (is (= (parse "July 1st") (time/date-time 2017 07 01 00 00)))
+          (is (= (parse "July 1st 12:0") nil))
+          (is (= (parse "July 1st 12:00") (time/date-time 2017 07 01 12 00)))
+          (is (= (parse "July 1st 12:01") (time/date-time 2017 07 01 12 01)))
+          (is (= (parse "July 1st 12:11") (time/date-time 2017 07 01 12 11)))
+          (is (= (parse "1st July") (time/date-time 2017 07 01 00 00)))
+          (is (= (parse "July 1st 13:21") (time/date-time 2017 07 01 13 21)))
+          (is (= (parse "1st July 13:21") (time/date-time 2017 07 01 13 21))))
+        
         (testing "in the future (translates to this month)"
           (is (= (parse "December 22nd") (time/date-time 2016 12 22 00 00 00)))
           (is (= (parse "December 1st @ 1pm") (time/date-time 2016 12 01 13 00 00))))))))

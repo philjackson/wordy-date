@@ -9,10 +9,12 @@
 (defn make-insta-strings [things]
   (str/join " | " (map #(str "'" % "'") things)))
 
+(def padded (map #(format "%02d" %) (range 0 10)))
+
 (def number-words (make-insta-strings (keys number-map)))
 (def day-nums (make-insta-strings (range 1 32)))
-(def hour-nums (make-insta-strings (range 0 24)))
-(def min-nums (make-insta-strings (range 0 60)))
+(def hour-nums (make-insta-strings (concat padded (range 0 24))))
+(def min-nums (make-insta-strings (concat padded (range 10 60))))
 (def sec-nums min-nums)
 (def day-words (make-insta-strings (flatten
                                     (conj (map #(vector % (subs % 0 3))
