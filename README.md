@@ -12,8 +12,6 @@ section:
 
 In your source:
 
-Making the assumption today's time is `2016-10-11T12:13:14.000Z`:
-
     (use 'wordy-date.core)
 
 Some examples yanked straight from the tests:
