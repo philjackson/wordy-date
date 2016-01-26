@@ -6,10 +6,13 @@
                :cljs [cljs-time.core :as t])
             #?(:clj [clojure.edn])))
 
+(def our-format #?(:cljs goog.string/format
+                   :clj clojure.core/format))
+
 (defn make-insta-strings [things]
   (str/join " | " (map #(str "'" % "'") things)))
 
-(def padded (map #(format "%02d" %) (range 0 10)))
+(def padded (map #(our-format "%02d" %) (range 0 10)))
 
 (def number-words (make-insta-strings (keys number-map)))
 (def day-nums (make-insta-strings (range 1 32)))
