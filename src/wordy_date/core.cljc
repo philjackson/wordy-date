@@ -46,7 +46,7 @@
 
 (def wordy-date-parser
   (insta/parser
-   (str/join "\n" ["S = tomorrow-ts | neg-duration | pos-duration | day-words-ts | day-words | quickie | lone-time-stamp | ordinal-day | ts-ordinal-day | ordinal-day-ts | month-ordinal-day | month-ordinal-day-ts | ordinal-day-month | ordinal-day-month-ts | ts-tomorrow"
+   (str/join "\n" ["S = tomorrow-ts | neg-duration | pos-duration | day-words-ts | day-words | quickie | lone-time-stamp | ordinal-day | ts-ordinal-day | ordinal-day-ts | month-ordinal-day | month-ordinal-day-ts | ordinal-day-month | ordinal-day-month-ts | ts-tomorrow | ordinal-day-month-year | ordinal-day-month-year-ts"
                    ;; "types"
                    "period-words = #'(sec(ond)?|min(ute)?|day|hour|week|month|year)s?'"
                    "ordinal-day = day-nums <ordinal-modifier>" ; 1st, 2nd..
@@ -75,6 +75,12 @@
                    "lone-time-stamp = ts"
                    "ts = <(( 'at' | '@' ) ws)>? hour-nums (<':'> min-nums)? meridiem?"
                    "meridiem = ( 'am' | 'pm' )"
+
+                   ;; things with years
+                   ;; year
+                   "year = #'[1-9][0-9]{3}'"
+                   "ordinal-day-month-year = ordinal-day-month <ws> year"
+                   "ordinal-day-month-year-ts = ordinal-day-month-year <ws> ts"
 
                    "month-ordinal-day = month-words <ws> (day-nums <ordinal-modifier>)"
                    "month-ordinal-day-ts = month-ordinal-day <ws> ts"
@@ -198,6 +204,9 @@
         (t/date-time (t/year next-year) month day))
       (t/date-time (t/year now) month day))))
 
+(defn handle-date-year [date year]
+  (t/date-time year (t/month date) (t/day date) (t/hour date) (t/minute date)))
+
 (defn parse [st]
   (let [S (insta/transform {:signed-digits parse-int
                             :period-words period-word-translation
@@ -225,6 +234,11 @@
                             :neg-duration handle-neg-duration
                             :pos-duration handle-pos-duration
                             :day-words handle-day-words
+
+                            ;; years
+                            :year parse-int
+                            :ordinal-day-month-year handle-date-year
+                            :ordinal-day-month-year-ts timestamp-to-day
 
                             :quickie #(case %
                                         "tomorrow" (t/plus (t/now) (t/days 1))

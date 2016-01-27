@@ -104,6 +104,10 @@
           (is (= (parse "July 1st 13:21") (time/date-time 2017 07 01 13 21)))
           (is (= (parse "1st July 13:21") (time/date-time 2017 07 01 13 21))))
         
+        (testing "month with year"
+          (is (= (parse "1st July 2012") (time/date-time 2012 07 01 00 00)))
+          (is (= (parse "1st July 2012 12pm") (time/date-time 2012 07 01 12 00))))
+
         (testing "in the future (translates to this month)"
           (is (= (parse "December 22nd") (time/date-time 2016 12 22 00 00 00)))
           (is (= (parse "December 1st @ 1pm") (time/date-time 2016 12 01 13 00 00))))))))
