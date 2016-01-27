@@ -207,46 +207,49 @@
 (defn handle-date-year [date year]
   (t/date-time year (t/month date) (t/day date) (t/hour date) (t/minute date)))
 
+(def transformations {:signed-digits parse-int
+                      :period-words period-word-translation
+                      :day-nums parse-int
+                      :day-half #(vector :day-half %)
+                      :hour-nums #(vector :hour (parse-int %))
+                      :month-ordinal-day month-ordinal-day-handler
+                      :ordinal-day-month #(month-ordinal-day-handler %2 %1)
+
+                      :min-nums #(vector :min (parse-int %))
+                      :month-words month-word-translation
+                      :ts handle-ts
+                      :_ordinal-day parse-int
+                      :ordinal-day handle-ordinal-day
+
+                      ;; timestamps
+                      :lone-time-stamp #(timestamp-to-day (t/now) %)
+                      :month-ordinal-day-ts timestamp-to-day
+                      :ordinal-day-month-ts timestamp-to-day
+                      :ts-ordinal-day #(timestamp-to-day %2 %1)
+                      :ordinal-day-ts timestamp-to-day
+                      :day-words-ts timestamp-to-day
+
+                      :number-words #(get number-map %)
+                      :neg-duration handle-neg-duration
+                      :pos-duration handle-pos-duration
+                      :day-words handle-day-words
+
+                      ;; years
+                      :year parse-int
+                      :ordinal-day-month-year handle-date-year
+                      :ordinal-day-month-year-ts timestamp-to-day
+
+                      :quickie #(case %
+                                  "tomorrow" (t/plus (t/now) (t/days 1))
+                                  "next week" (handle-day-words "monday")
+                                  "now" (t/now))
+
+                      :ts-tomorrow (fn [ts _] (timestamp-to-day (t/plus (t/now) (t/days 1)) ts))
+                      :tomorrow-ts (fn [_ ts] (timestamp-to-day (t/plus (t/now) (t/days 1)) ts))})
+
+(def raw-parse wordy-date-parser)
+
 (defn parse [st]
-  (let [S (insta/transform {:signed-digits parse-int
-                            :period-words period-word-translation
-                            :day-nums parse-int
-                            :day-half #(vector :day-half %)
-                            :hour-nums #(vector :hour (parse-int %))
-                            :month-ordinal-day month-ordinal-day-handler
-                            :ordinal-day-month #(month-ordinal-day-handler %2 %1)
-
-                            :min-nums #(vector :min (parse-int %))
-                            :month-words month-word-translation
-                            :ts handle-ts
-                            :_ordinal-day parse-int
-                            :ordinal-day handle-ordinal-day
-
-                            ;; timestamps
-                            :lone-time-stamp #(timestamp-to-day (t/now) %)
-                            :month-ordinal-day-ts timestamp-to-day
-                            :ordinal-day-month-ts timestamp-to-day
-                            :ts-ordinal-day #(timestamp-to-day %2 %1)
-                            :ordinal-day-ts timestamp-to-day
-                            :day-words-ts timestamp-to-day
-
-                            :number-words #(get number-map %)
-                            :neg-duration handle-neg-duration
-                            :pos-duration handle-pos-duration
-                            :day-words handle-day-words
-
-                            ;; years
-                            :year parse-int
-                            :ordinal-day-month-year handle-date-year
-                            :ordinal-day-month-year-ts timestamp-to-day
-
-                            :quickie #(case %
-                                        "tomorrow" (t/plus (t/now) (t/days 1))
-                                        "next week" (handle-day-words "monday")
-                                        "now" (t/now))
-
-                            :ts-tomorrow (fn [ts _] (timestamp-to-day (t/plus (t/now) (t/days 1)) ts))
-                            :tomorrow-ts (fn [_ ts] (timestamp-to-day (t/plus (t/now) (t/days 1)) ts))}
-                           (wordy-date-parser st))]
+  (let [S (insta/transform transformations (raw-parse st))]
     (when (= (first S) :S)
       (second S))))

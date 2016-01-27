@@ -8,11 +8,13 @@ human into an actual date relative to now.
 In your project.clj; add the following line to the `:dependencies`
 section:
 
-    [philjackson/wordy-date "0.1.9"]
+    [philjackson/wordy-date "0.1.10"]
 
 In your source:
 
     (use 'wordy-date.core)
+
+### Parse to datetime
 
 Some examples yanked straight from the tests:
 
@@ -52,13 +54,19 @@ Some examples yanked straight from the tests:
     (parse "22nd @ 1am")
     (parse "22nd at 1am")
 
-I'd suggest having a look at the tests for all examples.
+### Parse to something more composable
 
-## TODO
+    (raw-parse "12th Jan 2052")
 
-* Allow user to specify date relative to expressions.
-* Account for local time(?)
-* Instaparse string a bit crufty?
+produces:
+
+    [:S
+     [:ordinal-day-month-year
+      [:ordinal-day-month [:day-nums "12"] [:month-words "jan"]]
+      [:year "2052"]]]
+
+You can pass this structure through Instaparse's `transform` function
+to create your own... things.
 
 ## License
 

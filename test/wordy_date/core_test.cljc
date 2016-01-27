@@ -3,7 +3,7 @@
                       [clojure.test :refer [testing deftest is]]]
                 :cljs [[cljs-time.core :as time]
                        [cljs.test :refer [testing deftest is]]])
-            [wordy-date.core :refer [parse]]))
+            [wordy-date.core :refer [parse raw-parse]]))
 
 ;; October 2016
 ;; Su Mo Tu We Th Fr Sa
