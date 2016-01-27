@@ -8,7 +8,7 @@ human into an actual date relative to now.
 In your project.clj; add the following line to the `:dependencies`
 section:
 
-    [philjackson/wordy-date "0.1.4"]
+    [philjackson/wordy-date "0.1.9"]
 
 In your source:
 
@@ -16,6 +16,8 @@ In your source:
 
 Some examples yanked straight from the tests:
 
+    (parse "1st July 2012")
+    (parse "1st July 2012 12pm")
     (parse "December 1st @ 1pm")
     (parse "now")
     (parse "tomorrow")
