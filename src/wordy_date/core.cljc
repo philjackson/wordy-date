@@ -60,7 +60,7 @@
                    (str "month-words = " month-words)   ; jan, january, feb...
 
                    ;; random
-                   "quickie = 'tomorrow' | 'now' | 'next week'"
+                   "quickie = <( 'this time' <ws>)?> ( 'tomorrow' | 'now' | 'next week' )"
                    "tomorrow-ts = 'tomorrow' <ws> ts"
                    "ts-tomorrow = ts <ws> 'tomorrow'"
 

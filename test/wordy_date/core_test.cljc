@@ -24,8 +24,10 @@
         (is (= "2016-10-11T12:13:14.000Z" (str (time/now)))))
 
       (testing "quickies"
-        (is (= (parse "now") fake-now))
-        (is (= (parse "tomorrow") tomorrow))
+        (is (= (parse "tomorrow")
+               (parse "this time tomorrow")
+               tomorrow))
+        (is (= (parse "now") fake-now))        
         (is (= (parse "tomorrow @ 1pm") (time/date-time 2016 10 12 13 00)))
         (is (= (parse "3am tomorrow") (time/date-time 2016 10 12 3 00))))
 
