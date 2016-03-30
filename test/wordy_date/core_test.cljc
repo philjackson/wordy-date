@@ -18,8 +18,8 @@
 (def fake-now (time/date-time 2016 10 11 12 13 14)) ; => "2016-10-11T12:13:14.000Z"
 
 (deftest human-date-test
-  (let [tomorrow (time/plus fake-now (time/days 1))]
-    (with-redefs [time/now (constantly fake-now)]
+  (with-redefs [time/now (constantly fake-now)]
+    (let [tomorrow (time/plus fake-now (time/days 1))]
       (testing "redef worked"
         (is (= "2016-10-11T12:13:14.000Z" (str (time/now)))))
 
@@ -32,22 +32,42 @@
         (is (= (parse "3am tomorrow") (time/date-time 2016 10 12 3 00))))
 
       (testing "periods"
-        (is (= (parse "10 seconds") (time/plus fake-now (time/seconds 10))))
-        (is (= (parse "ten seconds") (time/plus fake-now (time/seconds 10))))
+        (is (= (parse "10 seconds")
+               (parse "in 10 seconds")
+               (time/plus fake-now (time/seconds 10))))
+        (is (= (parse "ten seconds")
+               (parse "in ten seconds")
+               (time/plus fake-now (time/seconds 10))))
 
-        (is (= (parse "10 mins") (time/plus fake-now (time/minutes 10))))
-        (is (= (parse "20 mins") (time/plus fake-now (time/minutes 20))))
-        (is (= (parse "twenty mins") (time/plus fake-now (time/minutes 20))))
+        (is (= (parse "10 mins")
+               (parse "in 10 mins")
+               (time/plus fake-now (time/minutes 10))))
+        (is (= (parse "20 mins")
+               (parse "in 20 mins")
+               (time/plus fake-now (time/minutes 20))))
+        (is (= (parse "twenty mins")
+               (parse "in twenty mins")
+               (time/plus fake-now (time/minutes 20))))
 
-        (is (= (parse "20 hours") (time/plus fake-now (time/hours 20))))
-        (is (= (parse "28 hours") (time/plus fake-now (time/hours 28))))
-        (is (= (parse "-28 hours") (time/minus fake-now (time/hours 28))))
+        (is (= (parse "20 hours")
+               (parse "in 20 hours")
+               (time/plus fake-now (time/hours 20))))
+        (is (= (parse "28 hours")
+               (parse "in 28 hours")
+               (time/plus fake-now (time/hours 28))))
+        (is (= (parse "-28 hours")
+               (parse "in -28 hours")
+               (time/minus fake-now (time/hours 28))))
 
-        (is (= (parse "20 mins and -10 mins") (time/plus fake-now (time/minutes 10))))
+        (is (= (parse "20 mins and -10 mins")
+               (parse "in 20 mins and -10 mins")
+               (time/plus fake-now (time/minutes 10))))
 
-        (is (= (parse "10 hours and 30 mins") (-> fake-now
-                                                  (time/plus (time/hours 10))
-                                                  (time/plus (time/minutes 30)))))
+        (is (= (parse "10 hours and 30 mins")
+               (parse "in 10 hours and 30 mins")
+               (-> fake-now
+                   (time/plus (time/hours 10))
+                   (time/plus (time/minutes 30)))))
         
         (is (= (parse "10 hours, 30 mins") (parse "10 hours and 30 mins")) )
 
@@ -112,4 +132,5 @@
 
         (testing "in the future (translates to this month)"
           (is (= (parse "December 22nd") (time/date-time 2016 12 22 00 00 00)))
-          (is (= (parse "December 1st @ 1pm") (time/date-time 2016 12 01 13 00 00))))))))
+          (is (= (parse "December 1st @ 1pm") (time/date-time 2016 12 01 13 00 00))))))
+    ))
