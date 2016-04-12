@@ -46,7 +46,7 @@
 
 (def wordy-date-parser
   (insta/parser
-   (str/join "\n" ["S = tomorrow-ts | neg-duration | pos-duration | day-words-ts | day-words | quickie | lone-time-stamp | ordinal-day | ts-ordinal-day | ordinal-day-ts | month-ordinal-day | month-ordinal-day-ts | ordinal-day-month | ordinal-day-month-ts | ts-tomorrow | ordinal-day-month-year | ordinal-day-month-year-ts"
+   (str/join "\n" ["S = tomorrow-ts | neg-duration | pos-duration | day-words-ts | day-words | quickie | lone-time-stamp | ordinal-day | ts-ordinal-day | ordinal-day-ts | month-ordinal-day | month-ordinal-day-ts | ordinal-day-month | ordinal-day-month-ts | ts-tomorrow | ordinal-day-month-year | ordinal-day-month-year-ts | next-week"
                    ;; "types"
                    "period-words = #'(sec(ond)?|min(ute)?|day|hour|week|month|year)s?'"
                    "ordinal-day = day-nums <ordinal-modifier>" ; 1st, 2nd..
@@ -56,13 +56,16 @@
                    (str "hour-nums = " hour-nums)       ; 0..23
                    (str "min-nums = " min-nums)         ; 0..59
                    (str "sec-nums = " sec-nums)         ; 0..59
-                   (str "day-words = " day-words)       ; mon, monday, tue...
+                   (str "raw-day-words = " day-words)       ; mon, monday, tue...
                    (str "month-words = " month-words)   ; jan, january, feb...
 
                    ;; random
                    "quickie = <( 'this time' <ws>)?> ( 'tomorrow' | 'now' | 'next week' )"
                    "tomorrow-ts = 'tomorrow' <ws> ts"
                    "ts-tomorrow = ts <ws> 'tomorrow'"
+
+                   "day-words = raw-day-words"
+                   "next-week = <'next'> <ws> raw-day-words"
 
                    ;; durations
                    "neg-duration = _multi-duration <ws> <'ago'>"
@@ -207,6 +210,16 @@
 (defn handle-date-year [date year]
   (t/date-time year (t/month date) (t/day date) (t/hour date) (t/minute date)))
 
+(defn handle-next-week [day]
+  (let [now (t/now)
+        dow (t/day-of-week now)]
+    (t/plus now
+            (t/days (+
+                     ;; move to the start of next week
+                     (- 7 dow)
+                     ;; add the days
+                     (day-number day))))))
+
 (def transformations {:signed-digits parse-int
                       :period-words period-word-translation
                       :day-nums parse-int
@@ -220,6 +233,8 @@
                       :ts handle-ts
                       :_ordinal-day parse-int
                       :ordinal-day handle-ordinal-day
+                      :raw-day-words str
+                      :next-week handle-next-week
 
                       ;; timestamps
                       :lone-time-stamp #(timestamp-to-day (t/now) %)
