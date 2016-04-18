@@ -99,10 +99,10 @@
           (is (= (parse "tuesday") (time/date-time 2016 10 18 00 00 00)))
 
           ;; becomes seven days plus/minus whatever
-          (is (= (parse "next mon") (time/date-time 2016 10 17 12 13 14)))
-          (is (= (parse "next monday") (time/date-time 2016 10 17 12 13 14)))
-          (is (= (parse "next thursday") (time/date-time 2016 10 20 12 13 14)))
-          (is (= (parse "next sun") (time/date-time 2016 10 23 12 13 14)))
+          (is (= (parse "next mon") (time/date-time 2016 10 17 00 00 00)))
+          (is (= (parse "next monday") (time/date-time 2016 10 17 00 00 00)))
+          (is (= (parse "next thursday") (time/date-time 2016 10 20 00 00 00)))
+          (is (= (parse "next sun") (time/date-time 2016 10 23 00 00 00)))
 
           (testing "with timestamp"
             (is (= (parse "mon 11pm") (time/date-time 2016 10 17 23 00 00)))

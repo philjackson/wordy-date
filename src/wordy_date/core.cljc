@@ -214,12 +214,13 @@
 (defn handle-next-week [day]
   (let [now (t/now)
         dow (t/day-of-week now)]
-    (t/plus now
-            (t/days (+
-                     ;; move to the start of next week
-                     (- 7 dow)
-                     ;; add the days
-                     (day-number day))))))
+    (midnight
+     (t/plus now
+             (t/days (+
+                      ;; move to the start of next week
+                      (- 7 dow)
+                      ;; add the days
+                      (day-number day)))))))
 
 (def transformations {:signed-digits parse-int
                       :period-words period-word-translation
