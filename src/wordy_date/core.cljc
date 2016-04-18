@@ -148,18 +148,24 @@
 (defn handle-pos-duration [& args]
   (apply handle-duration t/plus args))
 
+(defn midnight
+  "Returns midnight for the date provided at `date`. cljs-time has
+  `at-midnight', but clj-time doesn't seem to..."
+  [date]
+  (t/date-time (t/year date) (t/month date) (t/day date) 0 0 0))
+
 (defn handle-day-words [day-words]
   (let [num (day-number day-words)
         now (t/now)
         our-day-words (t/day-of-week now)]
-    (if (< our-day-words num)
-      ;; this occurs this week as the day given is "after" now
-      (t/plus now (t/days (- num our-day-words)))
+    (midnight (if (< our-day-words num)
+                ;; this occurs this week as the day given is "after" now
+                (t/plus now (t/days (- num our-day-words)))
 
-      ;; we move to next week as the day asked for is "before" now
-      (let [next-week (t/plus (t/now) (t/weeks 1))
-            our-day-words (t/day-of-week next-week)]
-        (t/plus next-week (t/days (- num our-day-words)))))))
+                ;; we move to next week as the day asked for is "before" now
+                (let [next-week (t/plus (t/now) (t/weeks 1))
+                      our-day-words (t/day-of-week next-week)]
+                  (t/plus next-week (t/days (- num our-day-words))))))))
 
 (defn handle-ordinal-day
   "Given a `day` which has been ordinal, transform to either that day
@@ -172,11 +178,6 @@
       (let [next-month (t/plus now (t/months 1))]
         (t/date-time (t/year next-month) (t/month next-month) day))
       (t/date-time (t/year now) (t/month now) day))))
-
-(defn midnight
-  "Returns midnight for the date provided at `date`."
-  [date]
-  (t/date-time (t/year date) (t/month date) (t/day date) 0 0 0))
 
 (defn timestamp-to-day
   "Given a timestamp in the format `{:hour h :min m}`, set the

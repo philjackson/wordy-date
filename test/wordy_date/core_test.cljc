@@ -81,12 +81,12 @@
       (testing "dow"
         (testing "for later this week"
           ;; later this week
-          (is (= (parse "wednesday") (time/date-time 2016 10 12 12 13 14)))
-          (is (= (parse "wed") (time/date-time 2016 10 12 12 13 14)))
-          (is (= (parse "sunday") (time/date-time 2016 10 16 12 13 14)))
-          (is (= (parse "sun") (time/date-time 2016 10 16 12 13 14)))
-          (is (= (parse "tues") (time/date-time 2016 10 18 12 13 14)))
-          (is (= (parse "tue") (time/date-time 2016 10 18 12 13 14)))
+          (is (= (parse "wednesday") (time/date-time 2016 10 12 00 00 00)))
+          (is (= (parse "wed") (time/date-time 2016 10 12 00 00 00)))
+          (is (= (parse "sunday") (time/date-time 2016 10 16 00 00 00)))
+          (is (= (parse "sun") (time/date-time 2016 10 16 00 00 00)))
+          (is (= (parse "tues") (time/date-time 2016 10 18 00 00 00)))
+          (is (= (parse "tue") (time/date-time 2016 10 18 00 00 00)))
 
           (testing "with timestamp"
             (is (= (parse "wed 12:30") (time/date-time 2016 10 12 12 30 00)))
@@ -94,9 +94,9 @@
 
         (testing "next week"
           ;; becomes next week (our test date is a tuesday)
-          (is (= (parse "next week") (time/date-time 2016 10 17 12 13 14)))
-          (is (= (parse "monday") (time/date-time 2016 10 17 12 13 14)))
-          (is (= (parse "tuesday") (time/date-time 2016 10 18 12 13 14)))
+          (is (= (parse "next week") (time/date-time 2016 10 17 00 00 00)))
+          (is (= (parse "monday") (time/date-time 2016 10 17 00 00 00)))
+          (is (= (parse "tuesday") (time/date-time 2016 10 18 00 00 00)))
 
           ;; becomes seven days plus/minus whatever
           (is (= (parse "next mon") (time/date-time 2016 10 17 12 13 14)))
