@@ -27,6 +27,7 @@
         (is (= (parse "tomorrow")
                (parse "this time tomorrow")
                tomorrow))
+        (is (= (parse "midnight") (time/date-time 2016 10 11 00 00 00)))
         (is (= (parse "now") fake-now))        
         (is (= (parse "tomorrow @ 1pm") (time/date-time 2016 10 12 13 00)))
         (is (= (parse "3am tomorrow") (time/date-time 2016 10 12 3 00))))

@@ -60,7 +60,7 @@
                    (str "month-words = " month-words)   ; jan, january, feb...
 
                    ;; random
-                   "quickie = <( 'this time' <ws>)?> ( 'tomorrow' | 'now' | 'next week' )"
+                   "quickie = <( 'this time' <ws>)?> ( 'midnight' | 'tomorrow' | 'now' | 'next week' )"
                    "tomorrow-ts = 'tomorrow' <ws> ts"
                    "ts-tomorrow = ts <ws> 'tomorrow'"
 
@@ -151,8 +151,8 @@
 (defn midnight
   "Returns midnight for the date provided at `date`. cljs-time has
   `at-midnight', but clj-time doesn't seem to..."
-  [date]
-  (t/date-time (t/year date) (t/month date) (t/day date) 0 0 0))
+  ([] (midnight (t/now)))
+  ([date] (t/date-time (t/year date) (t/month date) (t/day date) 0 0 0)))
 
 (defn handle-day-words [day-words]
   (let [num (day-number day-words)
@@ -259,6 +259,7 @@
                       :quickie #(case %
                                   "tomorrow" (t/plus (t/now) (t/days 1))
                                   "next week" (handle-day-words "monday")
+                                  "midnight" (midnight)
                                   "now" (t/now))
 
                       :ts-tomorrow (fn [ts _] (timestamp-to-day (t/plus (t/now) (t/days 1)) ts))
