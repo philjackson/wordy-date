@@ -69,10 +69,11 @@
 
                    ;; durations
                    "neg-duration = _multi-duration <ws> <'ago'>"
-                   "pos-duration = _multi-duration"
+                   "pos-duration = _multi-duration (<ws> <post-superfluous>)?"
                    "<_multi-duration> = _duration <(',' | <ws> 'and')?> (<ws> _duration)*"
                    "_duration = (<pre-superfluous> <ws>)? ( signed-digits | number-words ) <ws> period-words"
                    "<pre-superfluous> = 'in' | '+' | 'plus'"
+                   "<post-superfluous> = 'in the future' | 'from now'"
 
                    ;; time stamps
                    "lone-time-stamp = ts"
