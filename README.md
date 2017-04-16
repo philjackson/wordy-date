@@ -8,7 +8,7 @@ human into an actual date relative to now.
 In your project.clj; add the following line to the `:dependencies`
 section:
 
-    [philjackson/wordy-date "0.1.14"]
+    [philjackson/wordy-date "0.1.15"]
 
 In your source:
 
