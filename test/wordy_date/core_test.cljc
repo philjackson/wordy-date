@@ -146,15 +146,16 @@
           (is (= (parse "December 1st @ 1pm") (time/date-time 2016 12 01 13 00 00))))
 
         (testing "months"
-          (is (= (parse "January") (time/date-time 2017 01 01 00 00 00)))
-          (is (= (parse "january") (time/date-time 2017 01 01 00 00 00)))
-          (is (= (parse "Jan") (time/date-time 2017 01 01 00 00 00)))
-          (is (= (parse "jan") (time/date-time 2017 01 01 00 00 00)))
-
-          (is (= (parse "November") (time/date-time 2016 11 01 00 00 00)))
-          (is (= (parse "november") (time/date-time 2016 11 01 00 00 00)))
-          (is (= (parse "Nov") (time/date-time 2016 11 01 00 00 00)))
-          (is (= (parse "nov") (time/date-time 2016 11 01 00 00 00))))
+          (is (= (parse "January")
+                 (parse "Jan")
+                 (parse "january")
+                 (parse "jan")
+                 (time/date-time 2017 01 01 00 00 00)))
+          (is (= (parse "nov")
+                 (parse "Nov")
+                 (parse "November")
+                 (parse "november")
+                 (time/date-time 2016 11 01 00 00 00))))
 
         (testing "month year"
           (is (= (parse "January 2019") (time/date-time 2019 01 01 00 00 00)))
