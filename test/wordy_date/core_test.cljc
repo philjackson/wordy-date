@@ -154,4 +154,9 @@
           (is (= (parse "November") (time/date-time 2016 11 01 00 00 00)))
           (is (= (parse "november") (time/date-time 2016 11 01 00 00 00)))
           (is (= (parse "Nov") (time/date-time 2016 11 01 00 00 00)))
-          (is (= (parse "nov") (time/date-time 2016 11 01 00 00 00))))))))
+          (is (= (parse "nov") (time/date-time 2016 11 01 00 00 00))))
+
+        (testing "month year"
+          (is (= (parse "January 2019") (time/date-time 2019 01 01 00 00 00)))
+          (is (= (parse "January 2011") (time/date-time 2011 01 01 00 00 00)))
+          (is (= (parse "feb 1967") (time/date-time 1967 02 01 00 00 00))))))))

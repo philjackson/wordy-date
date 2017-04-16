@@ -46,7 +46,7 @@
 
 (def wordy-date-parser
   (insta/parser
-   (str/join "\n" ["S = tomorrow-ts | neg-duration | pos-duration | day-words-ts | day-words | quickie | lone-time-stamp | ordinal-day | ts-ordinal-day | ordinal-day-ts | month-ordinal-day | month-ordinal-day-ts | ordinal-day-month | ordinal-day-month-ts | ts-tomorrow | ordinal-day-month-year | ordinal-day-month-year-ts | next-week | month"
+   (str/join "\n" ["S = tomorrow-ts | neg-duration | pos-duration | day-words-ts | day-words | quickie | lone-time-stamp | ordinal-day | ts-ordinal-day | ordinal-day-ts | month-ordinal-day | month-ordinal-day-ts | ordinal-day-month | ordinal-day-month-ts | ts-tomorrow | ordinal-day-month-year | ordinal-day-month-year-ts | next-week | month | month-year"
                    ;; "types"
                    "period-words = #'(sec(ond)?|min(ute)?|day|hour|week|month|year)s?'"
                    "ordinal-day = day-nums <ordinal-modifier>" ; 1st, 2nd..
@@ -87,6 +87,7 @@
                    "ordinal-day-month-year-ts = ordinal-day-month-year <ws> ts"
 
                    "month = month-words"
+                   "month-year = month <ws> year"
                    "month-ordinal-day = month-words <ws> (day-nums <ordinal-modifier>)"
                    "month-ordinal-day-ts = month-ordinal-day <ws> ts"
                    "ordinal-day-month = (day-nums <ordinal-modifier>) <ws> month-words"
@@ -225,13 +226,17 @@
                       (day-number day)))))))
 
 (defn handle-month [month]
-  (let [now (t/now)
-        cur-month (t/month now)]
-    (t/date-time (if (> month cur-month)
-                   (t/year now)
-                   (t/year (t/plus now (t/years 1))))
-                 month
-                 1)))
+  (midnight
+   (let [now (t/now)
+         cur-month (t/month now)]
+     (t/date-time (if (> month cur-month)
+                    (t/year now)
+                    (t/year (t/plus now (t/years 1))))
+                  month
+                  1))))
+
+(defn handle-month-year [month year]
+  (t/date-time year (t/month month) (t/day month)))
 
 (def transformations {:signed-digits parse-int
                       :period-words period-word-translation
@@ -258,6 +263,7 @@
                       :day-words-ts timestamp-to-day
 
                       :month handle-month
+                      :month-year handle-month-year
 
                       :number-words #(get number-map %)
                       :neg-duration handle-neg-duration
