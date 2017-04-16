@@ -19,7 +19,7 @@
 
 (deftest human-date-test
   (with-redefs [time/now (constantly fake-now)]
-    (let [tomorrow (time/plus fake-now (time/days 1))]
+    (let [tomorrow (time/plus fake-now (time/days 1))]      
       (testing "redef worked"
         (is (= "2016-10-11T12:13:14.000Z" (str (time/now)))))
 
@@ -114,7 +114,7 @@
             (is (= (parse "tuesday 1pm") (time/date-time 2016 10 18 13 00 00)))
             (is (= (parse "tuesday at 1") (time/date-time 2016 10 18 01 00 00)))
             (is (= (parse "tuesday 1pm") (time/date-time 2016 10 18 13 00 00))))))
-
+      
       (testing "ordinal days"
         (testing "in the past (translates to next month)"
           (is (= (parse "1st") (time/date-time 2016 11 01 00 00 00))))
@@ -143,5 +143,15 @@
 
         (testing "in the future (translates to this month)"
           (is (= (parse "December 22nd") (time/date-time 2016 12 22 00 00 00)))
-          (is (= (parse "December 1st @ 1pm") (time/date-time 2016 12 01 13 00 00))))))
-    ))
+          (is (= (parse "December 1st @ 1pm") (time/date-time 2016 12 01 13 00 00))))
+
+        (testing "months"
+          (is (= (parse "January") (time/date-time 2017 01 01 00 00 00)))
+          (is (= (parse "january") (time/date-time 2017 01 01 00 00 00)))
+          (is (= (parse "Jan") (time/date-time 2017 01 01 00 00 00)))
+          (is (= (parse "jan") (time/date-time 2017 01 01 00 00 00)))
+
+          (is (= (parse "November") (time/date-time 2016 11 01 00 00 00)))
+          (is (= (parse "november") (time/date-time 2016 11 01 00 00 00)))
+          (is (= (parse "Nov") (time/date-time 2016 11 01 00 00 00)))
+          (is (= (parse "nov") (time/date-time 2016 11 01 00 00 00))))))))

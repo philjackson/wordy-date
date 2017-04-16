@@ -46,7 +46,7 @@
 
 (def wordy-date-parser
   (insta/parser
-   (str/join "\n" ["S = tomorrow-ts | neg-duration | pos-duration | day-words-ts | day-words | quickie | lone-time-stamp | ordinal-day | ts-ordinal-day | ordinal-day-ts | month-ordinal-day | month-ordinal-day-ts | ordinal-day-month | ordinal-day-month-ts | ts-tomorrow | ordinal-day-month-year | ordinal-day-month-year-ts | next-week"
+   (str/join "\n" ["S = tomorrow-ts | neg-duration | pos-duration | day-words-ts | day-words | quickie | lone-time-stamp | ordinal-day | ts-ordinal-day | ordinal-day-ts | month-ordinal-day | month-ordinal-day-ts | ordinal-day-month | ordinal-day-month-ts | ts-tomorrow | ordinal-day-month-year | ordinal-day-month-year-ts | next-week | just-month"
                    ;; "types"
                    "period-words = #'(sec(ond)?|min(ute)?|day|hour|week|month|year)s?'"
                    "ordinal-day = day-nums <ordinal-modifier>" ; 1st, 2nd..
@@ -86,6 +86,7 @@
                    "ordinal-day-month-year = ordinal-day-month <ws> year"
                    "ordinal-day-month-year-ts = ordinal-day-month-year <ws> ts"
 
+                   "just-month = month-words"
                    "month-ordinal-day = month-words <ws> (day-nums <ordinal-modifier>)"
                    "month-ordinal-day-ts = month-ordinal-day <ws> ts"
                    "ordinal-day-month = (day-nums <ordinal-modifier>) <ws> month-words"
@@ -223,6 +224,15 @@
                       ;; add the days
                       (day-number day)))))))
 
+(defn handle-just-month [month]
+  (let [now (t/now)
+        cur-month (t/month now)]
+    (t/date-time (if (> month cur-month)
+                   (t/year now)
+                   (t/year (t/plus now (t/years 1))))
+                 month
+                 1)))
+
 (def transformations {:signed-digits parse-int
                       :period-words period-word-translation
                       :day-nums parse-int
@@ -246,6 +256,8 @@
                       :ts-ordinal-day #(timestamp-to-day %2 %1)
                       :ordinal-day-ts timestamp-to-day
                       :day-words-ts timestamp-to-day
+
+                      :just-month handle-just-month
 
                       :number-words #(get number-map %)
                       :neg-duration handle-neg-duration
