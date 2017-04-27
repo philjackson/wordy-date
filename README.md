@@ -18,82 +18,84 @@ In your source:
 
 Some examples yanked straight from the tests:
 
-    (parse "tomorrow")                 => 2016-10-12T12:13:14.000Z
-    (parse "this time tomorrow")       => 2016-10-12T12:13:14.000Z
-    (parse "midnight")                 => 2016-10-11T00:00:00.000Z
-    (parse "now")                      => 2016-10-11T12:13:14.000Z
-    (parse "tomorrow @ 1pm")           => 2016-10-12T13:00:00.000Z
-    (parse "3am tomorrow")             => 2016-10-12T03:00:00.000Z
-    (parse "10 seconds in the future") => 2016-10-11T12:13:24.000Z
-    (parse "10 seconds")               => 2016-10-11T12:13:24.000Z
-    (parse "ten seconds")              => 2016-10-11T12:13:24.000Z
-    (parse "10 mins")                  => 2016-10-11T12:23:14.000Z
-    (parse "in 10 mins")               => 2016-10-11T12:23:14.000Z
-    (parse "20 mins")                  => 2016-10-11T12:33:14.000Z
-    (parse "in 20 mins")               => 2016-10-11T12:33:14.000Z
-    (parse "twenty mins")              => 2016-10-11T12:33:14.000Z
-    (parse "in twenty mins")           => 2016-10-11T12:33:14.000Z
-    (parse "20 hours")                 => 2016-10-12T08:13:14.000Z
-    (parse "in 20 hours")              => 2016-10-12T08:13:14.000Z
-    (parse "28 hours")                 => 2016-10-12T16:13:14.000Z
-    (parse "in 28 hours")              => 2016-10-12T16:13:14.000Z
-    (parse "-28 hours")                => 2016-10-10T08:13:14.000Z
-    (parse "in -28 hours")             => 2016-10-10T08:13:14.000Z
-    (parse "20 mins and -10 mins")     => 2016-10-11T12:23:14.000Z
-    (parse "in 20 mins and -10 mins")  => 2016-10-11T12:23:14.000Z
-    (parse "10 hours and 30 mins")     => 2016-10-11T22:43:14.000Z
-    (parse "in 10 hours and 30 mins")  => 2016-10-11T22:43:14.000Z
-    (parse "10 hours, 30 mins")        => 2016-10-11T22:43:14.000Z
-    (parse "12:30")                    => 2016-10-11T12:30:00.000Z
-    (parse "12am")                     => 2016-10-11T12:00:00.000Z
-    (parse "10 minutes ago")           => 2016-10-11T12:03:14.000Z
-    (parse "wednesday")                => 2016-10-12T00:00:00.000Z
-    (parse "wed")                      => 2016-10-12T00:00:00.000Z
-    (parse "sunday")                   => 2016-10-16T00:00:00.000Z
-    (parse "sun")                      => 2016-10-16T00:00:00.000Z
-    (parse "tues")                     => 2016-10-18T00:00:00.000Z
-    (parse "tue")                      => 2016-10-18T00:00:00.000Z
-    (parse "wed 12:30")                => 2016-10-12T12:30:00.000Z
-    (parse "sun 12am")                 => 2016-10-16T12:00:00.000Z
-    (parse "next week")                => 2016-10-17T00:00:00.000Z
-    (parse "monday")                   => 2016-10-17T00:00:00.000Z
-    (parse "tuesday")                  => 2016-10-18T00:00:00.000Z
-    (parse "next mon")                 => 2016-10-17T00:00:00.000Z
-    (parse "next monday")              => 2016-10-17T00:00:00.000Z
-    (parse "next thursday")            => 2016-10-20T00:00:00.000Z
-    (parse "next sun")                 => 2016-10-23T00:00:00.000Z
-    (parse "mon 11pm")                 => 2016-10-17T23:00:00.000Z
-    (parse "tuesday 1pm")              => 2016-10-18T13:00:00.000Z
-    (parse "tuesday at 1")             => 2016-10-18T01:00:00.000Z
-    (parse "tuesday 1pm")              => 2016-10-18T13:00:00.000Z
-    (parse "1st")                      => 2016-11-01T00:00:00.000Z
-    (parse "22nd")                     => 2016-10-22T00:00:00.000Z
-    (parse "1pm 22nd")                 => 2016-10-22T13:00:00.000Z
-    (parse "22nd 1am")                 => 2016-10-22T01:00:00.000Z
-    (parse "22nd @ 1am")               => 2016-10-22T01:00:00.000Z
-    (parse "22nd at 1am")              => 2016-10-22T01:00:00.000Z
-    (parse "July 1st")                 => 2017-07-01T00:00:00.000Z
-    (parse "July 1st 12:00")           => 2017-07-01T12:00:00.000Z
-    (parse "July 1st 12:01")           => 2017-07-01T12:01:00.000Z
-    (parse "July 1st 12:11")           => 2017-07-01T12:11:00.000Z
-    (parse "1st July")                 => 2017-07-01T00:00:00.000Z
-    (parse "July 1st 13:21")           => 2017-07-01T13:21:00.000Z
-    (parse "1st July 13:21")           => 2017-07-01T13:21:00.000Z
-    (parse "1st July 2012")            => 2012-07-01T00:00:00.000Z
-    (parse "1st July 2012 12pm")       => 2012-07-01T12:00:00.000Z
-    (parse "December 22nd")            => 2016-12-22T00:00:00.000Z
-    (parse "December 1st @ 1pm")       => 2016-12-01T13:00:00.000Z
-    (parse "January")                  => 2017-01-01T00:00:00.000Z
-    (parse "Jan")                      => 2017-01-01T00:00:00.000Z
-    (parse "january")                  => 2017-01-01T00:00:00.000Z
-    (parse "jan")                      => 2017-01-01T00:00:00.000Z
-    (parse "nov")                      => 2016-11-01T00:00:00.000Z
-    (parse "Nov")                      => 2016-11-01T00:00:00.000Z
-    (parse "November")                 => 2016-11-01T00:00:00.000Z
-    (parse "november")                 => 2016-11-01T00:00:00.000Z
-    (parse "January 2019")             => 2019-01-01T00:00:00.000Z
-    (parse "January 2011")             => 2011-01-01T00:00:00.000Z
-    (parse "feb 1967")                 => 1967-02-01T00:00:00.000Z
+Assumed this was run on 2016-10-11 12:13:14
+
+    (parse "tomorrow")                 => 2016-10-12 12:13:14
+    (parse "this time tomorrow")       => 2016-10-12 12:13:14
+    (parse "midnight")                 => 2016-10-11 00:00:00
+    (parse "now")                      => 2016-10-11 12:13:14
+    (parse "tomorrow @ 1pm")           => 2016-10-12 13:00:00
+    (parse "3am tomorrow")             => 2016-10-12 03:00:00
+    (parse "10 seconds in the future") => 2016-10-11 12:13:24
+    (parse "10 seconds")               => 2016-10-11 12:13:24
+    (parse "ten seconds")              => 2016-10-11 12:13:24
+    (parse "10 mins")                  => 2016-10-11 12:23:14
+    (parse "in 10 mins")               => 2016-10-11 12:23:14
+    (parse "20 mins")                  => 2016-10-11 12:33:14
+    (parse "in 20 mins")               => 2016-10-11 12:33:14
+    (parse "twenty mins")              => 2016-10-11 12:33:14
+    (parse "in twenty mins")           => 2016-10-11 12:33:14
+    (parse "20 hours")                 => 2016-10-12 08:13:14
+    (parse "in 20 hours")              => 2016-10-12 08:13:14
+    (parse "28 hours")                 => 2016-10-12 16:13:14
+    (parse "in 28 hours")              => 2016-10-12 16:13:14
+    (parse "-28 hours")                => 2016-10-10 08:13:14
+    (parse "in -28 hours")             => 2016-10-10 08:13:14
+    (parse "20 mins and -10 mins")     => 2016-10-11 12:23:14
+    (parse "in 20 mins and -10 mins")  => 2016-10-11 12:23:14
+    (parse "10 hours and 30 mins")     => 2016-10-11 22:43:14
+    (parse "in 10 hours and 30 mins")  => 2016-10-11 22:43:14
+    (parse "10 hours, 30 mins")        => 2016-10-11 22:43:14
+    (parse "12:30")                    => 2016-10-11 12:30:00
+    (parse "12am")                     => 2016-10-11 12:00:00
+    (parse "10 minutes ago")           => 2016-10-11 12:03:14
+    (parse "wednesday")                => 2016-10-12 00:00:00
+    (parse "wed")                      => 2016-10-12 00:00:00
+    (parse "sunday")                   => 2016-10-16 00:00:00
+    (parse "sun")                      => 2016-10-16 00:00:00
+    (parse "tues")                     => 2016-10-18 00:00:00
+    (parse "tue")                      => 2016-10-18 00:00:00
+    (parse "wed 12:30")                => 2016-10-12 12:30:00
+    (parse "sun 12am")                 => 2016-10-16 12:00:00
+    (parse "next week")                => 2016-10-17 00:00:00
+    (parse "monday")                   => 2016-10-17 00:00:00
+    (parse "tuesday")                  => 2016-10-18 00:00:00
+    (parse "next mon")                 => 2016-10-17 00:00:00
+    (parse "next monday")              => 2016-10-17 00:00:00
+    (parse "next thursday")            => 2016-10-20 00:00:00
+    (parse "next sun")                 => 2016-10-23 00:00:00
+    (parse "mon 11pm")                 => 2016-10-17 23:00:00
+    (parse "tuesday 1pm")              => 2016-10-18 13:00:00
+    (parse "tuesday at 1")             => 2016-10-18 01:00:00
+    (parse "tuesday 1pm")              => 2016-10-18 13:00:00
+    (parse "1st")                      => 2016-11-01 00:00:00
+    (parse "22nd")                     => 2016-10-22 00:00:00
+    (parse "1pm 22nd")                 => 2016-10-22 13:00:00
+    (parse "22nd 1am")                 => 2016-10-22 01:00:00
+    (parse "22nd @ 1am")               => 2016-10-22 01:00:00
+    (parse "22nd at 1am")              => 2016-10-22 01:00:00
+    (parse "July 1st")                 => 2017-07-01 00:00:00
+    (parse "July 1st 12:00")           => 2017-07-01 12:00:00
+    (parse "July 1st 12:01")           => 2017-07-01 12:01:00
+    (parse "July 1st 12:11")           => 2017-07-01 12:11:00
+    (parse "1st July")                 => 2017-07-01 00:00:00
+    (parse "July 1st 13:21")           => 2017-07-01 13:21:00
+    (parse "1st July 13:21")           => 2017-07-01 13:21:00
+    (parse "1st July 2012")            => 2012-07-01 00:00:00
+    (parse "1st July 2012 12pm")       => 2012-07-01 12:00:00
+    (parse "December 22nd")            => 2016-12-22 00:00:00
+    (parse "December 1st @ 1pm")       => 2016-12-01 13:00:00
+    (parse "January")                  => 2017-01-01 00:00:00
+    (parse "Jan")                      => 2017-01-01 00:00:00
+    (parse "january")                  => 2017-01-01 00:00:00
+    (parse "jan")                      => 2017-01-01 00:00:00
+    (parse "nov")                      => 2016-11-01 00:00:00
+    (parse "Nov")                      => 2016-11-01 00:00:00
+    (parse "November")                 => 2016-11-01 00:00:00
+    (parse "november")                 => 2016-11-01 00:00:00
+    (parse "January 2019")             => 2019-01-01 00:00:00
+    (parse "January 2011")             => 2011-01-01 00:00:00
+    (parse "feb 1967")                 => 1967-02-01 00:00:00
     
 ### Parse to something more composable
 
@@ -111,7 +113,7 @@ to create your own... things.
 
 ## License
 
-Copyright © 2015 Phil Jackson
+Copyright © 2015,2016,2017 Phil Jackson
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
