@@ -19,7 +19,7 @@ In your source:
 
 Some examples yanked straight from the tests:
 
-Assumed this was run on 2016-10-11 12:13:14
+Assuming this was run on 2016-10-11 12:13:14:
 
     (parse "tomorrow")                 => 2016-10-12 12:13:14
     (parse "this time tomorrow")       => 2016-10-12 12:13:14
