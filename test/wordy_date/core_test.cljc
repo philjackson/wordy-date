@@ -19,7 +19,7 @@
 
 (deftest human-date-test
   (with-redefs [time/now (constantly fake-now)]
-    (let [tomorrow (time/plus fake-now (time/days 1))]      
+    (let [tomorrow (time/plus fake-now (time/days 1))]
       (testing "redef worked"
         (is (= "2016-10-11T12:13:14.000Z" (str (time/now)))))
 
@@ -30,7 +30,7 @@
         (is (= (parse "midnight")
                (time/date-time 2016 10 11 00 00 00)))
         (is (= (parse "now")
-               fake-now))        
+               fake-now))
         (is (= (parse "tomorrow @ 1pm")
                (time/date-time 2016 10 12 13 00)))
         (is (= (parse "3am tomorrow")
@@ -73,7 +73,7 @@
                (-> fake-now
                    (time/plus (time/hours 10))
                    (time/plus (time/minutes 30)))))
-        
+
         (is (= (parse "10 hours, 30 mins") (parse "10 hours and 30 mins")) )
 
         (testing "timestamp"
@@ -114,7 +114,7 @@
             (is (= (parse "tuesday 1pm") (time/date-time 2016 10 18 13 00 00)))
             (is (= (parse "tuesday at 1") (time/date-time 2016 10 18 01 00 00)))
             (is (= (parse "tuesday 1pm") (time/date-time 2016 10 18 13 00 00))))))
-      
+
       (testing "ordinal days"
         (testing "in the past (translates to next month)"
           (is (= (parse "1st") (time/date-time 2016 11 01 00 00 00))))
@@ -136,7 +136,7 @@
           (is (= (parse "1st July") (time/date-time 2017 07 01 00 00)))
           (is (= (parse "July 1st 13:21") (time/date-time 2017 07 01 13 21)))
           (is (= (parse "1st July 13:21") (time/date-time 2017 07 01 13 21))))
-        
+
         (testing "month with year"
           (is (= (parse "1st July 2012") (time/date-time 2012 07 01 00 00)))
           (is (= (parse "1st July 2012 12pm") (time/date-time 2012 07 01 12 00))))
