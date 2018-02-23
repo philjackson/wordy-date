@@ -46,7 +46,7 @@
 
 (def wordy-date-parser
   (insta/parser
-   (str/join "\n" ["S = tomorrow-ts | neg-duration | pos-duration | day-words-ts | day-words | quickie | lone-time-stamp | ordinal-day | ts-ordinal-day | ordinal-day-ts | month-ordinal-day | month-ordinal-day-ts | ordinal-day-month | ordinal-day-month-ts | ts-tomorrow | ordinal-day-month-year | ordinal-day-month-year-ts | next-week | month | month-year"
+   (str/join "\n" ["S = tomorrow-ts | neg-duration | pos-duration | day-words-ts | day-words | quickie | lone-time-stamp | ordinal-day | ts-ordinal-day | ordinal-day-ts | month-ordinal-day | month-ordinal-day-ts | ordinal-day-month | ordinal-day-month-ts | ts-tomorrow | ordinal-day-month-year | ordinal-day-month-year-ts | next-week | last-week | month | month-year"
                    ;; "types"
                    "period-words = #'(sec(ond)?|min(ute)?|day|hour|week|month|year)s?'"
                    "ordinal-day = day-nums <ordinal-modifier>" ; 1st, 2nd..
@@ -66,6 +66,7 @@
 
                    "day-words = raw-day-words"
                    "next-week = <'next'> <ws> raw-day-words"
+                   "last-week = <'last'> <ws> raw-day-words"
 
                    ;; durations
                    "neg-duration = _multi-duration <ws> <'ago'>"
@@ -81,7 +82,6 @@
                    "meridiem = ( 'am' | 'pm' )"
 
                    ;; things with years
-                   ;; year
                    "year = #'[1-9][0-9]{3}'"
                    "ordinal-day-month-year = ordinal-day-month <ws> year"
                    "ordinal-day-month-year-ts = ordinal-day-month-year <ws> ts"
@@ -214,6 +214,14 @@
 (defn handle-date-year [date year]
   (t/date-time year (t/month date) (t/day date) (t/hour date) (t/minute date)))
 
+(defn handle-last-week [day]
+  (let [now (t/now)
+        dow (t/day-of-week now)]
+    (midnight
+     (t/plus
+      (t/minus now (t/days (+ 7 dow)))
+      (t/days (day-number day))))))
+
 (defn handle-next-week [day]
   (let [now (t/now)
         dow (t/day-of-week now)]
@@ -253,6 +261,7 @@
                       :ordinal-day handle-ordinal-day
                       :raw-day-words str
                       :next-week handle-next-week
+                      :last-week handle-last-week
 
                       ;; timestamps
                       :lone-time-stamp #(timestamp-to-day (t/now) %)
