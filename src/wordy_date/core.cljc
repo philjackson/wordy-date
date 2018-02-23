@@ -60,7 +60,7 @@
                    (str "month-words = " month-words)   ; jan, january, feb...
 
                    ;; random
-                   "quickie = <( 'this time' <ws>)?> ( 'midnight' | 'tomorrow' | 'now' | 'next week' )"
+                   "quickie = <( 'this time' <ws>)?> ( 'midnight' | 'tomorrow' | 'now' | 'next week' | 'last week' )"
                    "tomorrow-ts = 'tomorrow' <ws> ts"
                    "ts-tomorrow = ts <ws> 'tomorrow'"
 
@@ -287,6 +287,7 @@
                       :quickie #(case %
                                   "tomorrow" (t/plus (t/now) (t/days 1))
                                   "next week" (handle-day-words "monday")
+                                  "last week" (midnight (t/minus (t/now) (t/days 7)))
                                   "midnight" (midnight)
                                   "now" (t/now))
 

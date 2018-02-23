@@ -98,7 +98,7 @@
             (is (= (parse "sun 12am") (time/date-time 2016 10 16 12 00 00)))))
 
         (testing "last week"
-          #_(is (= (parse "last week") (time/date-time 2016 10 4 00 00 00)))
+          (is (= (parse "last week") (time/date-time 2016 10 4 00 00 00)))
 
           ;; becomes seven days plus/minus whatever
           (is (= (parse "last mon") (time/date-time 2016 10 3 00 00 00)))
