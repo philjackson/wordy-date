@@ -83,6 +83,11 @@
       (testing "negative periods"
         (is (= (parse "10 minutes ago") (time/minus fake-now (time/minutes 10)))))
 
+      (testing "easter sunday"
+        (is (= (parse "easter sunday 1999") (time/date-time 1999 04 04 00 00 00)))
+        (is (= (parse "easter sunday 2018") (time/date-time 2018 04 01 00 00 00)))
+        (is (= (parse "easter sunday") (time/date-time 2016 03 27 00 00 00))))
+
       (testing "dow"
         (testing "for later this week"
           ;; later this week

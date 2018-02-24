@@ -26,6 +26,8 @@ Assuming this was run on 2016-10-11 12:13:14:
     (parse "midnight")                 => 2016-10-11 00:00:00
     (parse "now")                      => 2016-10-11 12:13:14
     (parse "tomorrow @ 1pm")           => 2016-10-12 13:00:00
+    (parse "easter sunday")            => 2016-03-27 00-00-00
+    (parse "easter sunday 1999")       => 1999-04-04 00-00-00
     (parse "3am tomorrow")             => 2016-10-12 03:00:00
     (parse "10 seconds in the future") => 2016-10-11 12:13:24
     (parse "10 seconds")               => 2016-10-11 12:13:24

@@ -46,7 +46,7 @@
 
 (def wordy-date-parser
   (insta/parser
-   (str/join "\n" ["S = tomorrow-ts | neg-duration | pos-duration | day-words-ts | day-words | quickie | lone-time-stamp | ordinal-day | ts-ordinal-day | ordinal-day-ts | month-ordinal-day | month-ordinal-day-ts | ordinal-day-month | ordinal-day-month-ts | ts-tomorrow | ordinal-day-month-year | ordinal-day-month-year-ts | next-week | last-week | month | month-year"
+   (str/join "\n" ["S = tomorrow-ts | neg-duration | pos-duration | day-words-ts | day-words | quickie | lone-time-stamp | ordinal-day | ts-ordinal-day | ordinal-day-ts | month-ordinal-day | month-ordinal-day-ts | ordinal-day-month | ordinal-day-month-ts | ts-tomorrow | ordinal-day-month-year | ordinal-day-month-year-ts | next-week | last-week | month | month-year | easter-sunday"
                    ;; "types"
                    "period-words = #'(sec(ond)?|min(ute)?|day|hour|week|month|year)s?'"
                    "ordinal-day = day-nums <ordinal-modifier>" ; 1st, 2nd..
@@ -85,6 +85,7 @@
                    "year = #'[1-9][0-9]{3}'"
                    "ordinal-day-month-year = ordinal-day-month <ws> year"
                    "ordinal-day-month-year-ts = ordinal-day-month-year <ws> ts"
+                   "easter-sunday = 'easter sunday' (<ws> year)?"
 
                    "month = month-words"
                    "month-year = month <ws> year"
@@ -246,6 +247,24 @@
 (defn handle-month-year [month year]
   (t/date-time year (t/month month) (t/day month)))
 
+(defn handle-easter-sunday
+  ([_]      (handle-easter-sunday nil (t/year (t/now))))
+  ([_ year] (let [a (mod year 19)
+                  b (quot year 100)
+                  c (mod year 100)
+                  d (quot b 4)
+                  e (mod b 4)
+                  f (quot (+ b 8) 25)
+                  g (quot (+ (- b f) 1) 3)
+                  h (mod (+ (* 19 a) (- b d g) 15) 30)
+                  i (quot c 4)
+                  k (mod c 4)
+                  l (mod (- (+ 32 (* 2 e) (* 2 i)) h k) 7)
+                  m (quot (+ a (* 11 h) (* 22 l)) 451)
+                  n (quot (+ h (- l (* 7 m)) 114) 31)
+                  p (mod (+ h (- l (* 7 m)) 114) 31)]
+              (t/date-time year n (+ p 1) 0 0 0))))
+
 (def transformations {:signed-digits parse-int
                       :period-words period-word-translation
                       :day-nums parse-int
@@ -283,6 +302,7 @@
                       :year parse-int
                       :ordinal-day-month-year handle-date-year
                       :ordinal-day-month-year-ts timestamp-to-day
+                      :easter-sunday handle-easter-sunday
 
                       :quickie #(case %
                                   "tomorrow" (t/plus (t/now) (t/days 1))
