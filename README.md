@@ -116,7 +116,7 @@ to create your own... things.
 
 ## License
 
-Copyright © 2015,2016,2017 Phil Jackson
+Copyright © 2015,2016,2017,2018 Phil Jackson
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
