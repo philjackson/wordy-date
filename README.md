@@ -9,7 +9,7 @@ the moment.
 In your project.clj; add the following line to the `:dependencies`
 section:
 
-    [philjackson/wordy-date "0.1.17"]
+    [philjackson/wordy-date "0.1.18"]
 
 In your source:
 
